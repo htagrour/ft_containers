@@ -1,0 +1,23 @@
+-LIST:
+    * max_size
+    * front
+    * back
+    * assign
+    * push_front
+    * pop_front
+    * push_back
+    * pop_back
+    * insert
+    * erase
+    * swap
+    * resize
+    * clear
+    * splice
+    * remove
+    * remove_if
+    * unique
+    * merge
+    * sort
+    * reverse
+    * get_allocator
+    * swap

@@ -17,7 +17,7 @@ class Node
 
 namespace ft
 {
-    template<typename T >
+    template<typename T , typename Alloc = std::allocator<T> >
     class list
     {
         public:
@@ -85,7 +85,8 @@ namespace ft
 
             list()
             {
-                _head = NULL;
+                _head = _tail = NULL;
+                _size = 0;
             }
             ~list()
             {
@@ -101,53 +102,95 @@ namespace ft
                     }
                 }
             }
+            /*
+                ITERATORS
+            */
+
+            Iterator begin(){return (Iterator(this->_head));}
+            ResverseIterator rbegin()
+            {
+                return (ResverseIterator(_tail));
+            }
+            Iterator end(){return (Iterator(nullptr));}
+            ResverseIterator rend(){return (ResverseIterator(nullptr));}
+            /*
+                CAPACITY
+            */
+            bool empty() const { return (!_head);}
+            size_type size() const { return (_size);}
+            // size_type max_size() const { return ()}
+
+            /*
+                ELEMENT ACCESS
+            */
+
+            reference front() const { return (_head->data);}
+            reference back() const { return (_tail->data);}
+
+            /*
+                MODIFIERS
+            */
+
             void push_front(const value_type& value)
             {
                 Node<value_type> *new_node = new Node<value_type>(value);
 
                 if (!_head)
-                    _head = new_node;
+                    _head = _tail = new_node;
                 else
                 {
                     _head->prev = new_node;
                     new_node->next = _head;
                     _head = new_node;
                 }
+                _size += 1;
+            }
+
+            void pop_front()
+            {
+                Node<value_type> *tmp;
+
+                if (_head)
+                {
+                    tmp = _head->next;
+                    delete _head;
+                    _head = tmp;
+                    _head->prev = nullptr;
+                    _size--;
+                }
+            }
+
+            void pop_back()
+            {
+                Node<value_type> *tmp;
+
+                if (_tail)
+                {
+                    tmp = _head->prev;
+                    delete _tail;
+                    _tail = tmp;
+                    _tail->next = nullptr;
+                    _size--;
+                }
             }
             void push_back(const value_type& value)
             {
                 Node<value_type> *new_node = new Node<value_type>(value);
-                Node<value_type> *tmp;
 
                 if (!_head)
-                    _head = new_node;
+                    _head = _tail = new_node;
                 else
                 {
-                    tmp = _head;
-                    while(tmp->next)
-                        tmp = tmp->next;
-                    new_node->prev = tmp;
-                    tmp->next = new_node;
+                    _tail->next = new_node;
+                    new_node->prev = _tail;
+                    _tail = new_node;
                 }
+                _size += 1;
             }
-
-            Iterator begin(){return (Iterator(this->_head));}
-            ResverseIterator rbegin()
-            {
-                Node<value_type> *tmp;
-
-                tmp = _head;
-                while (tmp->next)
-                    tmp = tmp->next;
-                return (ResverseIterator(tmp));
-            }
-            Iterator end(){return (Iterator(nullptr));}
-            ResverseIterator rend(){return (ResverseIterator(nullptr));}
-
-            // make reverse iterator
-
         private:
             Node<value_type>* _head;
+            Node<value_type>* _tail;
+            size_type _size;
     };
 
 }
