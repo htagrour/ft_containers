@@ -43,7 +43,7 @@ class Integers
 int main(void)
 {
     Integers cont;
-    std::list
+    // std::list
     for (Integers::Iterator it = cont.begin(); it != cont.end();it++)
     {
         *it = 10;

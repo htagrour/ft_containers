@@ -1,6 +1,7 @@
 #include "list/List.hpp"
 #include <iostream>
 #include <list>
+
 int main()
 {
     {
@@ -8,11 +9,12 @@ int main()
         ft::list<int> _listi;
         
         std::cout << "IS_EMPTY: "<< _listi.empty() << std::endl;
-        for (int i = 1; i < 10;i++)
+        for (int i = 1; i < 100;i++)
             _listi.push_back(i);
-        _listi.pop_front();
-        for(ft::list<int>::ResverseIterator it = _listi.rbegin() ; it != _listi.rend(); it++)
+        _listi.pop_back();
+        for(ft::list<int>::iterator it = _listi.begin() ; it != _listi.end(); it++)
         {
+            *it *= 10;
             std::cout << *it << std::endl;
         }
         std::cout << "IS_EMPTY: "<< _listi.empty() << std::endl;

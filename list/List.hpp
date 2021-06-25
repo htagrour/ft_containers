@@ -3,17 +3,7 @@
 
 #include <memory>
 #include <cstddef>
-
-template <typename T>
-class Node
-{
-    public:
-        T data;
-        Node<T> *next;
-        Node<T> *prev;
-        Node():next(nullptr),prev(nullptr){}
-        Node(const T& value):data(value), next(nullptr), prev(nullptr){}
-};
+#include "ListUtils.hpp"
 
 namespace ft
 {
@@ -22,66 +12,17 @@ namespace ft
     {
         public:
             typedef T value_type;
-            typedef value_type& reference;
-            typedef const value_type& const_reference;
-            typedef value_type* pointer;
-            typedef const value_type* const_pointer;
+            typedef Alloc allocator_type;
+            typedef typename allocator_type::reference reference;
+            typedef typename allocator_type::const_reference const_reference;
+            typedef typename allocator_type::pointer pointer;
+            typedef typename allocator_type::const_pointer const_pointer;
             typedef std::size_t size_type;
             typedef std::ptrdiff_t difference_type;
-            
-            class Iterator
-            {
-                public:
-                    Iterator(Node<value_type> *ptr):m_ptr(ptr){}
-                    reference operator*() const { return m_ptr->data; }
-                    // pointer operator->() { return m_ptr; }
-                    Iterator& operator++() { m_ptr = m_ptr->next; return *this; } 
-                    Iterator operator++(int)
-                    {
-                        Iterator tmp = *this;
-                        m_ptr = m_ptr->next;
-                        return tmp;
-                    }
-                    Iterator& operator--() { m_ptr = m_ptr->prev; return *this; } 
-                    Iterator operator--(int)
-                    {
-                        Iterator tmp = *this;
-                        m_ptr = m_ptr->prev;
-                        return tmp;
-                    } 
-                    bool operator!=(const Iterator& rsh){return (this->m_ptr != rsh.m_ptr);}
-                    bool operator==(const Iterator& rsh){return (this->m_ptr == rsh.m_ptr);}
-
-                private:
-                    Node<value_type> *m_ptr;
-            };
-
-            class ResverseIterator
-            {
-                public:
-                    ResverseIterator(Node<value_type> *ptr):m_ptr(ptr){}
-                    reference operator*() const { return m_ptr->data; }
-                    // pointer operator->() { return m_ptr; }
-                    ResverseIterator& operator++() { m_ptr = m_ptr->prev; return *this; } 
-                    ResverseIterator operator++(int)
-                    {
-                        ResverseIterator tmp = *this;
-                        m_ptr = m_ptr->prev;
-                        return tmp;
-                    }
-                    ResverseIterator& operator--() { m_ptr = m_ptr->next; return *this; } 
-                    ResverseIterator operator--(int)
-                    {
-                        ResverseIterator tmp = *this;
-                        m_ptr = m_ptr->next;
-                        return tmp;
-                    } 
-                    bool operator!=(const ResverseIterator& rsh){return (this->m_ptr != rsh.m_ptr);}
-                    bool operator==(const ResverseIterator& rsh){return (this->m_ptr == rsh.m_ptr);}
-
-                private:
-                    Node<value_type> *m_ptr;
-            };
+            typedef Iterator<value_type> iterator;
+            // typedef implementation-defined constiterator;
+            typedef ResverseIterator<value_type> reverse_iterator;
+            // typedef reverse_iterator<constiterator> const_reverse_iterator;
 
             list()
             {
@@ -106,13 +47,13 @@ namespace ft
                 ITERATORS
             */
 
-            Iterator begin(){return (Iterator(this->_head));}
-            ResverseIterator rbegin()
+            iterator begin(){return (iterator(this->_head));}
+            reverse_iterator rbegin()
             {
-                return (ResverseIterator(_tail));
+                return (reverse_iterator(_tail));
             }
-            Iterator end(){return (Iterator(nullptr));}
-            ResverseIterator rend(){return (ResverseIterator(nullptr));}
+            iterator end(){return (iterator(nullptr));}
+            reverse_iterator rend(){return (reverse_iterator(nullptr));}
             /*
                 CAPACITY
             */
@@ -166,7 +107,7 @@ namespace ft
 
                 if (_tail)
                 {
-                    tmp = _head->prev;
+                    tmp = _tail->prev;
                     delete _tail;
                     _tail = tmp;
                     _tail->next = nullptr;
