@@ -2,18 +2,15 @@
 #include <iostream>
 // allocators >>
 #include "list/ListUtils.hpp"
+#include "list/List.hpp"
 #include <memory>
 #include <list>
 
+typedef typename std::allocator<int>::template rebind<Node<int>>::other _node_all; 
 int main()
 {
-    Node<int> *head;
-    std::allocator< Node<int> > alloc;
-    std::list<int> l;
-    head = alloc.allocate(sizeof( Node<int> ));
-    // alloc.deallocate(head, sizeof( Node<int> ));
-    head = alloc.allocate(sizeof( Node<int> ));
-    while(1){}
+    ft::list<int> l;
 
+    l.assign(1, 1);
     return (0);
 }

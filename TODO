@@ -1,15 +1,9 @@
 -LIST:
-    * max_size
-    * front
-    * back
-    * assign
-    * push_front
-    * pop_front
-    * push_back
-    * pop_back
+    *SFINAE
+    * const and reverse iterator
+    * assign    
     * insert
     * erase
-    * swap
     * resize
     * clear
     * splice
