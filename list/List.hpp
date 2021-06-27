@@ -76,8 +76,8 @@ namespace ft
                     this->push_back(val);
             }
 
-            template <typename InputIterator, class = typename ft::enable_if<!std::is_integral<InputIterator>::value>::type >
-            void assign(InputIterator first, InputIterator last)
+            template <typename InputIterator >
+            void assign(InputIterator first, InputIterator last , typename std::enable_if<!std::is_integral<InputIterator>::value, InputIterator>::type = 0)
             {
                 this->clear();
                 for (InputIterator it = first;it != last; it++)

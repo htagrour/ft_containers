@@ -25,7 +25,6 @@ int main()
         std::cout << "IS_EMPTY: "<< _listi.empty() << std::endl;
         for (int i = 1; i < 100;i++)
             _listi.push_back(i);
-        // print<ft::list<int>>(_listi);
         _listi.assign(5,200);
         _listi1.assign(_listi.begin(), _listi.end());
         print< ft::list<int> >(_listi);
