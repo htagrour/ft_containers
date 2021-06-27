@@ -4,6 +4,11 @@
         "__string": "cpp",
         "list": "cpp",
         "string": "cpp",
-        "vector": "cpp"
+        "vector": "cpp",
+        "__split_buffer": "cpp",
+        "algorithm": "cpp",
+        "array": "cpp",
+        "locale": "cpp",
+        "string_view": "cpp"
     }
 }

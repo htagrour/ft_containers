@@ -47,7 +47,7 @@ namespace ft
                 return (reverse_iterator(_tail));
             }
             const_iterator end() const {return (const_iterator(nullptr));}
-            iterator end(){return (iterator(nullptr));}
+            iterator end(){return (iterator(&_tail));}
             reverse_iterator rend(){return (reverse_iterator(nullptr));}
             /*
                 CAPACITY
@@ -77,14 +77,25 @@ namespace ft
             }
 
             template <typename InputIterator >
-            void assign(InputIterator first, InputIterator last , typename std::enable_if<!std::is_integral<InputIterator>::value, InputIterator>::type = 0)
+            void assign(InputIterator first, InputIterator last ,
+                        typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type = 0)
             {
                 this->clear();
                 for (InputIterator it = first;it != last; it++)
                     this->push_back(*it);
+                //check if an InputIteraor is valid
             }
             
+            iterator insert(iterator position, const value_type& val)
+            {
+                node *new_node;
 
+                //if !position
+                    // throw(error);
+                //insert before
+                insert_before_node(position.m_ptr, val);
+                return (position);
+            }
 
             void push_front(const value_type& value)
             {
@@ -166,6 +177,22 @@ namespace ft
                     _size = 0;
                 }
             }
+
+            void insert_before_node(node *_node, const value_type& value)
+            {
+                node *new_node;
+
+                new_node = _my_alloc.allocate(1);
+                // if (!_node)
+                // {
+                //     if (!_head)
+                        
+                // }
+                _my_alloc.construct(new_node, node(value, _node, _node->prev));
+                if (_node == _head)
+                    _head = new_node;
+            }
+
         private:
             node* _head;
             node* _tail;

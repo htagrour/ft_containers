@@ -57,3 +57,4 @@ int main(void)
 // https://www.youtube.com/watch?v=F9eDv-YIOQ0
 // https://internalpointers.com/post/writing-custom-iterators-modern-cpp
 // http://www2.lawrence.edu/fast/GREGGJ/CMSC270/linked/iterators.html
+// https://stackoverflow.com/questions/55402803/linked-list-iterator-implementation-c
