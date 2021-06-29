@@ -11,10 +11,8 @@
 
 int main()
 {
-    std::list<int> lst;
+    std::list<std::string> lst;
 
-    lst.insert(lst.begin(), 15);
-    lst.insert(lst.begin(), 15);
-    std::cout << *lst.end() << std::endl;
+    std::cout << lst.back();
     return (0);
 }

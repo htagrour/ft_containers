@@ -27,9 +27,9 @@ namespace ft
             typedef ResverseIterator<value_type> reverse_iterator;
             // typedef reverse_iterator<constiterator> const_reverse_iterator;
 
-            list()
+            list(const alloc)
             {
-                _head = _tail = NULL;
+                _head = _tail = create_node();
                 _size = 0;
             }
             ~list()
@@ -44,15 +44,15 @@ namespace ft
             iterator begin(){return (iterator(this->_head));}
             reverse_iterator rbegin()
             {
-                return (reverse_iterator(_tail));
+                return (reverse_iterator(_tail->prev));
             }
-            const_iterator end() const {return (const_iterator(nullptr));}
-            iterator end(){return (iterator(&_tail));}
-            reverse_iterator rend(){return (reverse_iterator(nullptr));}
+            const_iterator end() const {return (const_iterator(_tail));}
+            iterator end(){return (iterator(_tail));}
+            reverse_iterator rend(){return (reverse_iterator(_head->prev));}
             /*
                 CAPACITY
             */
-            bool empty() const { return (!_head);}
+            bool empty() const { return (!_size);}
             size_type size() const { return (_size);}
             size_type max_size() const{ return (_my_alloc.max_size());};
 
@@ -62,8 +62,8 @@ namespace ft
 
             const_reference front() const { return (_head->data);}
             reference front() { return (_head->data);}
-            const_reference back() const { return (_tail->data);}
-            reference back() { return (_tail->data);}
+            const_reference back() const { return (_tail->prev->data);}
+            reference back() { return (_tail->prev->data);}
 
             /*
                 MODIFIERS
@@ -72,15 +72,17 @@ namespace ft
             void assign (size_type n, const value_type& val)
             {
                 this->clear();
+                _head = _tail = create_node();
                 for (size_type i = n; i > 0; i--)
                     this->push_back(val);
             }
 
-            template <typename InputIterator >
+            template <typename InputIterator  >
             void assign(InputIterator first, InputIterator last ,
-                        typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type = 0)
+                        typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type t = 0)
             {
                 this->clear();
+                _head = _tail = create_node();
                 for (InputIterator it = first;it != last; it++)
                     this->push_back(*it);
                 //check if an InputIteraor is valid
@@ -99,99 +101,102 @@ namespace ft
 
             void push_front(const value_type& value)
             {
-                node *new_node;
-
-                new_node = _my_alloc.allocate(1);
-                _my_alloc.construct(new_node, node(value));
-                if (!_head)
-                    _head = _tail = new_node;
-                else
-                {
-                    _head->prev = new_node;
-                    new_node->next = _head;
-                    _head = new_node;
-                }
+                _head = create_node(value, _head->prev, _head);
+                _head->next->prev = _head;
                 _size += 1;
             }
 
             void pop_front()
             {
-                node *tmp;
-
-                if (_head)
+                if (_head != _tail)
                 {
-                    tmp = _head->next;
-                    _my_alloc.destroy(_head);
-                    _my_alloc.deallocate(_head);
-                    _head = tmp;
-                    _head->prev = nullptr;
-                    _size--;
+                    _head = _head->next;
+                    delete_node(_head->prev);
                 }
             }
 
             void pop_back()
             {
-                node *tmp;
-
-                if (_tail)
-                {
-                    tmp = _tail->prev;
-                    _my_alloc.destroy(_tail);
-                    _my_alloc.deallocate(_tail);
-                    _tail = tmp;
-                    _tail->next = nullptr;
-                    _size--;
-                }
+                if (_tail != _head)
+                    delete_node(_tail->prev);
             }
+
             void push_back(const value_type& value)
             {
-                node *new_node;
-                new_node = _my_alloc.allocate(1);
-                _my_alloc.construct(new_node, node(value));
-
-                if (!_head)
-                    _head = _tail = new_node;
-                else
-                {
-                    _tail->next = new_node;
-                    new_node->prev = _tail;
-                    _tail = new_node;
-                }
+                _tail->prev = create_node(value, _tail->prev, _tail);
+                if (_tail->prev->prev)
+                    _tail->prev->prev->next = _tail->prev;
+                if (_tail == _head)
+                    _head = _tail->prev;
                 _size += 1;
             }
 
         private:
+
             void clear()
             {
                 node *tmp;
 
-                if (_head)
+                while(_head != _tail)
                 {
-                    while(_head)
-                    {
-                        tmp = _head->next;
-                        _my_alloc.destroy(_head);
-                        _my_alloc.deallocate(_head, 1);
-                        _head = tmp;
-                    }
-                    _size = 0;
+                    tmp = _head->next;
+                    _my_alloc.destroy(_head);
+                    _my_alloc.deallocate(_head, 1);
+                    _head = tmp;
                 }
+                _my_alloc.destroy(_tail);
+                _my_alloc.deallocate(_tail, 1);
+                _tail = NULL;
+                _head = NULL;
+                _size = 0;
             }
-
-            void insert_before_node(node *_node, const value_type& value)
+            
+            node* create_node(const T& value, node* prev, node* next)
             {
                 node *new_node;
 
                 new_node = _my_alloc.allocate(1);
-                // if (!_node)
-                // {
-                //     if (!_head)
-                        
-                // }
-                _my_alloc.construct(new_node, node(value, _node, _node->prev));
-                if (_node == _head)
-                    _head = new_node;
+                _my_alloc.construct(new_node, node(value, next, prev));
+                return (new_node);
             }
+
+            node* create_node()
+            {
+                node *new_node;
+
+                new_node = _my_alloc.allocate(1);
+                _my_alloc.construct(new_node, node());
+                return (new_node);
+            }
+
+            void delete_node(node *_node)
+            {
+                if (_node)
+                {
+                    if (_node->prev)
+                        _node->prev->next = _node->next;
+                    if (_node->next)
+                        _node->next->prev = _node->prev;
+                    _my_alloc.destroy(_node);
+                    _my_alloc.deallocate(_node, 1);
+                    _size--;
+                }
+            }
+
+            // void insert_before_node(node *_node, const value_type& value)
+            // {
+            //     node *new_node;
+
+            //     new_node = _my_alloc.allocate(1);
+            //     if (!_node)
+            //     {
+            //         if (!_head)
+                        
+            //     }
+            //     _my_alloc.construct(new_node, node(value, _node, _node->prev));
+            //     if (_node == _head)
+            //         _head = new_node;
+            // }
 
         private:
             node* _head;

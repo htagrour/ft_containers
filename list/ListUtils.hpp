@@ -11,6 +11,7 @@ class Node
         Node<T> *prev;
         Node():next(nullptr),prev(nullptr){}
         Node(const T& value):data(value), next(nullptr), prev(nullptr){}
+        // Node(const T& value):data(value), next(nullptr), prev(nullptr){}
         Node(const T& value, Node<T> *_next, Node<T> *_prev): data(value), next(_next), prev(_prev){}
 };
 
