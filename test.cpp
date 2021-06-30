@@ -59,3 +59,4 @@ int main(void)
 // http://www2.lawrence.edu/fast/GREGGJ/CMSC270/linked/iterators.html
 // https://stackoverflow.com/questions/55402803/linked-list-iterator-implementation-c
 // https://h-deb.clg.qc.ca/Sujets/TrucsScouts/Comprendre_enable_if.html
+// https://www.hackcraft.net/cpp/templateInheritance/
