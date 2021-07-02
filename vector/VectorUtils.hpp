@@ -57,6 +57,31 @@ namespace ft
             pointer ptr;
     };
 
+    // template <typename T>
+    // class ConstVectIterator
+    // {
+    //     public:
+    //         typedef std::random_access_iterator_tag iterator_category;
+    //         typedef std::ptrdiff_t difference_type;
+    //         typedef T value_type;
+    //         typedef value_type* pointer;
+    //         typedef value_type& reference;
+
+    //         VectIterator(pointer ptr): ptr(ptr){}
+    //         reference operator*() const { return *ptr; }
+    //         pointer operator->() { return ptr; }
+    //         reference operator[](difference_type rhs) const {return ptr[rhs];}
+    //         VectIterator& operator++() { ptr++; return *this; }  
+    //         VectIterator operator++(int) { VectIterator tmp = *this; ++(*this); return tmp; }
+    //         VectIterator& operator--() { ptr--; return *this; }  
+    //         VectIterator operator--(int) { VectIterator tmp = *this; --(*this); return tmp; }
+    //         friend bool operator== (const VectIterator& a, const VectIterator& b) { return a.ptr == b.ptr; };
+    //         friend bool operator!= (const VectIterator& a, const VectIterator& b) { return a.ptr != b.ptr; }; 
+
+    //     protected:
+    //         pointer ptr;
+    // };
+
     template <typename T>
     class RevereVectIterator: public VectIterator<T>
     {

@@ -9,21 +9,25 @@
 #include "vector/vector.hpp"
 #include <vector>
 #include <typeinfo>
-
-template <typename T>
-
-void fun(T first, T end)
+class Test
 {
-    std::cout << "IKHAN" << std::endl;
-}
+    public:
+        Test(int i):_data(i){ std::cout << "Const called\n";}
+        ~Test(){std::cout << "Destr called\n"; _data = 0;};
+        int _data;
+};
 
 int main()
 {
-    int arr[4] = {1 , 2 , 5, 6};
-    ft::VectIterator<int> it = arr;
+    Test *str;
+    std::vector<int> vect;
 
-    fun<ft::VectIterator<int> >(arr, arr+ 1);
-    // for (; it != arr - 1; it++)
-        // std::cout << *it << std::endl;
+    ft::vector<int> fvect(20, 12);
+
+    
+    // vect.push_back(10);
+    fvect.resize(24);
+    for (ft::vector<int>::iterator it = fvect.begin(); it != fvect.end(); it++)
+        std::cout << *it << std::endl;
     return (0);
 }
