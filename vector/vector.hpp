@@ -2,6 +2,7 @@
 #define VECTOR_HPP
 #include "VectorUtils.hpp"
 #include "../utils/utils.hpp"
+#include <exception>
 
 #define DEFAUL_SIZE 4
 namespace ft
@@ -22,28 +23,37 @@ namespace ft
                 typedef ConstIterator<value_type> const_iterator;
                 typedef ft::RevereVectIterator<value_type> reverse_iterator;
 
+                class BadAlloc: public std::exception
+                {
+                        public:
+                                const char* what() const throw()
+                                {
+                                        return ("bad_alloc");
+                                }
+                };
                 /*
                         constructor/deconstructor
                 */
 
                 explicit vector(const allocator_type& alloc = allocator_type()):_alloc(alloc)
                 {
-                        _size = 0;
-                        _capacity = 0;
-                        _data = NULL;
+                        zero();
                 }
                 explicit vector (size_type n, const value_type& val = value_type(),
-                                const allocator_type& alloc = allocator_type())
+                                const allocator_type& alloc = allocator_type()): _alloc(alloc)
                         {
-                                _data = _alloc.allocate(n);
-                                for (size_type i = 0; i < n; i++)
-                                        _alloc.construct(_data + i, val);
-                                _capacity = _size = n;
+                                zero();
+                                assign(n, val);
                         }
                 template <typename InputIterator>
                 vector(InputIterator first, InputIterator last,
-                        const allocator_type& alloc = allocator_type())
-                        {}
+                        const allocator_type& alloc = allocator_type(),
+                        typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = NULL):_alloc(alloc)
+                        {
+                                zero();
+                                assign(first, last);
+                        }
+                
                 vector(const vector& rsh)
                 {
                         *this = rsh;
@@ -53,11 +63,11 @@ namespace ft
                 {
                         if (this != &rsh)
                         {
-                                if (_capacity)
-                                        this->clear();
-                                //assign
+                                clear();
+                                assign(rsh.begin(), rsh.end());
                         }
                 }
+
                 reference operator[](size_type index) {return _data[index];}
                 const_reference operator[] (size_type n) const{ return _data[index];};
 
@@ -69,30 +79,54 @@ namespace ft
                 bool empty() const{ return !_size;};
                 size_type max_size() const {return _alloc.max_size();}
                 size_type capacity() const { return _capacity;}
-                void reserve (size_type n)
+
+                void reserve (size_type n) throw(BadAlloc)
                 {
+                        pointer new_arr;
+
+                        if (n <= 0 || n >= max_size())
+                                throw(BadAlloc());
                         if (n > _capacity)
-                                resize();
+                        {
+                                try
+                                {
+                                        new_arr = _alloc.allocate(n);
+                                }
+                                catch(std::exception &e)
+                                {
+                                        throw(BadAlloc());
+                                }
+                                if (_size)
+                                {
+                                        for (size_type  i = 0; i < _size; i++)
+                                        {
+                                                _alloc.construct(new_arr + i,_data[i]);
+                                                _alloc.destroy(_data + i);
+                                        }
+                                        _alloc.deallocate(_data, _capacity);
+                                }
+                                _data = new_arr;
+                                _capacity = n;
+                        }
                 }
+
                 void resize (size_type n, value_type val = value_type())
                 {
                         if (n < _size)
                         {
-                                for (size_type i = n; i < _size; i++)
-                                        _alloc.destroy(_data + i);
+                                destroy_element(n);
                                 _size = n;
                         }
                         else
                         {
                                 if (n > _capacity)
                                 {
-                                        reallocate(n);
+                                        reserve(n);
                                         resize(n, val);
                                 }
                                 else
                                 {
-                                        for (size_type i = _size; i < n; i++)
-                                                _alloc.construct(_data + i, val);
+                                        construct_element(n,val);
                                         _size = n;
                                 }
                         }
@@ -101,42 +135,63 @@ namespace ft
                         Iterators
                 */
                 iterator begin(){ return iterator(_data);}
-                // const_iterator begin() const;
+                const_iterator begin() const return (const_iterator(_data));
                 iterator end(){ return iterator(_data + _size);}
 
+                /*
+                        Modifiers:
+                */
+                template <class InputIterator>
+                void assign (InputIterator first, InputIterator last,
+                             typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = NULL)
+                {
+                        pointer _temp;
+                        difference_type diff = (last - first);
+
+                        if (typeid(typename ft::iterator_traits<InputIterator>::iterator_category) ==\
+                                typeid(typename ft::iterator_traits<InputIterator>::iterator_category))
+                                {
+                                        reserve(diff);
+                                        _temp = _data;
+                                        for (InputIterator it = first; it != last; it++)
+                                                _alloc.construct(_data++, *it);
+                                        _data = _temp;
+                                        _size = diff;
+                                    }
+                }
 
                 void assign (size_type n, const value_type& val)
                 {
-                        // if (n > _capacity)
+                        destroy_element(_size);
+                        resize(n, val);
                 }
+
                 void clear()
                 {
-                        if (_size)
+                        if (_capacity)
                         {
-                                for (size_type i = 0; i < _size ; i++)
-                                        _alloc.destroy(_data + i);
+                                destroy_element(_size);
                                 _alloc.deallocate(_data, _capacity);
-                                _capacity = _size  = 0;
                         }
+                        zero();
                 }
-                
         private:
-                void reallocate(size_type n)
+                void zero()
                 {
-                        pointer new_arr;
-
-                        if (n > _capacity)
-                        {
-                                new_arr = _alloc.allocate(n + DEFAUL_SIZE);
-                                for (size_type  i = 0; i < _size; i++)
-                                {
-                                        _alloc.construct(new_arr + i,_data[i]);
-                                        _alloc.destroy(_data + i);
-                                }
-                                _alloc.deallocate(_data, _capacity);
-                                _data = new_arr;
-                                _capacity = n;
-                        }
+                        _size = 0;
+                        _capacity = 0;
+                        _data = NULL;
+                }
+                void destroy_element(size_type n)
+                {
+                        for (size_type i = n; i < _size; i++)
+                                _alloc.destroy(_data + i);
+                        _size = 0;
+                }
+                void construct_element(size_type n,const value_type& val) //!!!!!!!!!!
+                {
+                        for (size_type i = _size; i < n; i++)
+                                _alloc.construct(_data + i, val);
                 }
         private:
             allocator_type _alloc;
@@ -145,5 +200,19 @@ namespace ft
             size_type _capacity;
     };
 }
+template <typename T>
+std::ostream &operator<<(std::ostream &os, ft::vector<T> &rsh)
+{
+        os << "Size:" << rsh.size() << std::endl;
+        os << "Capacity:" << rsh.capacity() << std::endl;
+        os << "Empty:" << rsh.empty() << std::endl;
+        os << "Max_size:" << rsh.max_size() << std::endl; 
 
+        os << "Content:" << std::endl;
+        for (typename ft::vector<T>::iterator it = rsh.begin(); it != rsh.end(); it++)
+                std::cout << *it << std::endl;
+        return (os);
+}
 #endif
+
+//  typename ft::enable_if<(typeid(typename ft::iterator_traits<InputIterator>::iterator_category) == typeid(typename ft::iterator_traits<InputIterator>::iterator_category)), InputIterator>::type* = NULL

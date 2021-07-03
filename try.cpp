@@ -19,15 +19,26 @@ class Test
 
 int main()
 {
-    Test *str;
-    std::vector<int> vect;
-
-    ft::vector<int> fvect(20, 12);
+    std::vector<int> vect(5, 10);
 
     
     // vect.push_back(10);
-    fvect.resize(24);
-    for (ft::vector<int>::iterator it = fvect.begin(); it != fvect.end(); it++)
-        std::cout << *it << std::endl;
+    try
+    {
+        ft::vector<int> fvect(vect.begin(), vect.end());
+        ft::vector<int> assig(fvect);
+        // fvect.resize(fvect.max_size() - 1, 100);
+        std::cout << fvect;
+        fvect.assign(3, 1);
+        std::cout << fvect;
+        std::cout << assig;
+
+    }
+    catch(const std::exception &e)
+    {
+
+        std::cout <<"Execption:" <<e.what() << std::endl;
+    }
+
     return (0);
 }
