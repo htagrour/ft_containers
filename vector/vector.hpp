@@ -20,7 +20,7 @@ namespace ft
                 typedef std::size_t size_type;
                 typedef std::ptrdiff_t difference_type;
                 typedef ft::VectIterator <value_type> iterator;
-                typedef ConstIterator<value_type> const_iterator;
+                typedef ft::ConstVectIterator<value_type> const_iterator;
                 typedef ft::RevereVectIterator<value_type> reverse_iterator;
 
                 class BadAlloc: public std::exception
@@ -29,6 +29,15 @@ namespace ft
                                 const char* what() const throw()
                                 {
                                         return ("bad_alloc");
+                                }
+                };
+
+                class OutOfRange :public std::exception
+                {
+                        public:
+                                const char * what() const throw()
+                                {
+                                        return ("out of range");
                                 }
                 };
                 /*
@@ -56,6 +65,7 @@ namespace ft
                 
                 vector(const vector& rsh)
                 {
+                        zero();
                         *this = rsh;
                 }
 
@@ -66,10 +76,17 @@ namespace ft
                                 clear();
                                 assign(rsh.begin(), rsh.end());
                         }
+                        return *this;
                 }
 
-                reference operator[](size_type index) {return _data[index];}
-                const_reference operator[] (size_type n) const{ return _data[index];};
+
+                /*
+                        Iterators
+                */
+                iterator begin(){ return iterator(_data);}
+                const_iterator begin() const {return (const_iterator(_data));}
+                iterator end(){ return iterator(_data + _size);}
+                const_iterator end() const {return (const_iterator(_data + _size));}
 
                 /*
                         Capacity
@@ -132,12 +149,28 @@ namespace ft
                         }
                 }
                 /*
-                        Iterators
+                        Element access
                 */
-                iterator begin(){ return iterator(_data);}
-                const_iterator begin() const return (const_iterator(_data));
-                iterator end(){ return iterator(_data + _size);}
+                reference operator[](size_type index) {return _data[index];}
+                const_reference operator[] (size_type n) const{ return _data[index];};
+                reference at(size_type n) throw(OutOfRange)
+                {
+                        if (n < 0 || n >= _size)
+                                throw(OutOfRange());
+                        return (_data[n]);
+                }
 
+                const_reference at(size_type n) const
+                {
+                        if (n < 0|| n >= _size)
+                                throw(OutOfRange());
+                        return (_data[n]);
+                }
+
+                reference front() { return _data[0];}
+                const_reference front() const { return _data[0];};
+                reference back() { return _data[_size - 1];}
+                const_reference back() const { return _data[_size - 1];};
                 /*
                         Modifiers:
                 */
@@ -166,6 +199,40 @@ namespace ft
                         resize(n, val);
                 }
 
+                void push_back (const value_type& val)
+                {
+                        if (_size + 1 > _capacity)
+                                reserve(_size + DEFAUL_SIZE);
+                        _alloc.construct(_data + _size++, val);
+                }
+                
+                void pop_back()
+                {
+                        if (_size)
+                        {
+                                _alloc.destroy(_data + _size -1);
+                                _size--;
+                        }
+                }
+
+                iterator insert (iterator position, const value_type& val)
+                {
+                        return insert_helper(position, 1,val);
+                }
+
+                void insert (iterator position, size_type n, const value_type& val)
+                {
+                        insert_helper(position,n, val);
+                }
+
+                template <class InputIterator>
+                void insert (iterator position, InputIterator first, InputIterator last,
+                        typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = NULL)
+                {
+                        // difference_type n = last - first;
+                        for (InputIterator it = first; it != last; it++)
+                                insert_helper(position++, 1, *it);
+                }
                 void clear()
                 {
                         if (_capacity)
@@ -175,6 +242,7 @@ namespace ft
                         }
                         zero();
                 }
+
         private:
                 void zero()
                 {
@@ -193,6 +261,34 @@ namespace ft
                         for (size_type i = _size; i < n; i++)
                                 _alloc.construct(_data + i, val);
                 }
+                void shift_data(size_type index, size_type number)
+                {
+                        value_type tmp;
+                        value_type tmp1;
+
+                        for(size_type n = 0; n < number; n++)
+                        {
+                                tmp = _data[index + n];
+                                for(size_type i = index + n; i < _size + number; i++)
+                                {
+                                        tmp1 = _data[i + 1];
+                                        _data[i + 1] = tmp;
+                                        tmp = tmp1;
+                                }
+                        }
+                }
+
+                iterator insert_helper(iterator position, size_type n, const value_type& val)
+                {
+                        difference_type index = position - begin();
+                        if (_size + n > _capacity)
+                                reserve(_size + n + DEFAUL_SIZE);
+                        shift_data(index, n);
+                        for (int i = index; i < index + n; i++)
+                                _alloc.construct(_data + i, val);
+                        _size += n;
+                        return (iterator(_data + index));
+                }
         private:
             allocator_type _alloc;
             pointer _data;
@@ -207,6 +303,8 @@ std::ostream &operator<<(std::ostream &os, ft::vector<T> &rsh)
         os << "Capacity:" << rsh.capacity() << std::endl;
         os << "Empty:" << rsh.empty() << std::endl;
         os << "Max_size:" << rsh.max_size() << std::endl; 
+        os << "Front:" << rsh.front() << std::endl;
+        os << "Back:" << rsh.back() << std::endl;
 
         os << "Content:" << std::endl;
         for (typename ft::vector<T>::iterator it = rsh.begin(); it != rsh.end(); it++)

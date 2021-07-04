@@ -16,29 +16,29 @@ class Test
         ~Test(){std::cout << "Destr called\n"; _data = 0;};
         int _data;
 };
-
+template<typename T>
+void print_shit(T container)
+{
+    for (typename T::iterator it = container.begin(); it != container.end();it++)
+        std::cout << *it << std::endl;
+}
 int main()
 {
-    std::vector<int> vect(5, 10);
-
-    
-    // vect.push_back(10);
+    ft::vector<int> vect;
+    std::vector<int> f(12,2);
     try
     {
-        ft::vector<int> fvect(vect.begin(), vect.end());
-        ft::vector<int> assig(fvect);
-        // fvect.resize(fvect.max_size() - 1, 100);
-        std::cout << fvect;
-        fvect.assign(3, 1);
-        std::cout << fvect;
-        std::cout << assig;
-
+        for (int i = 0; i < 10; i++)
+            vect.push_back(i);
+        vect.insert(vect.begin() + 2, f.begin(),f.end());
+        // std::cout << vect;
+        print_shit<ft::vector<int> >(vect);
     }
-    catch(const std::exception &e)
+    catch(const std::exception& e)
     {
-
-        std::cout <<"Execption:" <<e.what() << std::endl;
+        std::cerr << e.what() << '\n';
     }
+    
 
     return (0);
 }
