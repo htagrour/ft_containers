@@ -179,7 +179,7 @@ namespace ft
                              typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = NULL)
                 {
                         pointer _temp;
-                        difference_type diff = (last - first);
+                        difference_type diff = std::distance(first, last);
 
                         if (typeid(typename ft::iterator_traits<InputIterator>::iterator_category) ==\
                                 typeid(typename ft::iterator_traits<InputIterator>::iterator_category))
@@ -229,10 +229,35 @@ namespace ft
                 void insert (iterator position, InputIterator first, InputIterator last,
                         typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = NULL)
                 {
-                        // difference_type n = last - first;
-                        for (InputIterator it = first; it != last; it++)
-                                insert_helper(position++, 1, *it);
+                        iterator pos = position;
+
+                        if (typeid(typename ft::iterator_traits<InputIterator>::iterator_category) ==\
+                            typeid(typename ft::iterator_traits<InputIterator>::iterator_category) &&
+                            std::distance(first, last) >= 0)
+                            {
+                                for (InputIterator it = first; it != last; it++)
+                                        position = insert_helper(position, 1, *it);
+                            }
                 }
+
+                iterator erase (iterator position)
+                {
+                        return (erase_helper(position, 1));
+                }
+
+                iterator erase (iterator first, iterator last)
+                {
+                        return(erase_helper(first, last - first));
+                }
+
+                void swap (vector& x)
+                {
+                        vector tmp(*this);
+
+                        *this = x;
+                        x = tmp;
+                }
+
                 void clear()
                 {
                         if (_capacity)
@@ -242,6 +267,14 @@ namespace ft
                         }
                         zero();
                 }
+                /*
+                        Allocator
+                */
+
+               allocator_type get_allocator() const
+               {
+                       return (_alloc);
+               }
 
         private:
                 void zero()
@@ -261,18 +294,36 @@ namespace ft
                         for (size_type i = _size; i < n; i++)
                                 _alloc.construct(_data + i, val);
                 }
-                void shift_data(size_type index, size_type number)
+
+                void shift_right_data(size_type index, size_type number)
                 {
                         value_type tmp;
                         value_type tmp1;
 
                         for(size_type n = 0; n < number; n++)
                         {
-                                tmp = _data[index + n];
-                                for(size_type i = index + n; i < _size + number; i++)
+                                tmp = _data[index];
+                                for(size_type i = index; i < _size + number; i++)
                                 {
                                         tmp1 = _data[i + 1];
                                         _data[i + 1] = tmp;
+                                        tmp = tmp1;
+                                }
+                        }
+                } // it's work now but i don't know why!!!
+
+                void shift_left_data(size_type index, size_type number)
+                {
+                        value_type tmp;
+                        value_type tmp1;
+
+                        for (size_type n = 0; n < number; n++)
+                        {
+                                tmp = _data[_size - 1];
+                                for(int i = _size - 1; i > index; i--)
+                                {
+                                        tmp1 = _data[i - 1];
+                                        _data[i - 1] = tmp;
                                         tmp = tmp1;
                                 }
                         }
@@ -280,14 +331,27 @@ namespace ft
 
                 iterator insert_helper(iterator position, size_type n, const value_type& val)
                 {
-                        difference_type index = position - begin();
+                        difference_type index = std::distance(begin(), position);
                         if (_size + n > _capacity)
                                 reserve(_size + n + DEFAUL_SIZE);
-                        shift_data(index, n);
-                        for (int i = index; i < index + n; i++)
+                        shift_right_data(index, n);
+                        for (size_type i = index; i < index + n; i++)
                                 _alloc.construct(_data + i, val);
                         _size += n;
                         return (iterator(_data + index));
+                }
+
+                iterator erase_helper(iterator position, size_type n)
+                {
+                        difference_type index = std::distance(begin(), position);
+                        if (index >= 0 && index < _size)
+                        {
+                                for (size_type i = index; i < index + n; i++)
+                                        _alloc.destroy(_data + i);
+                                shift_left_data(index, n);
+                                _size -= n;
+                        }
+                        return (iterator(_data + index));   
                 }
         private:
             allocator_type _alloc;
@@ -312,5 +376,3 @@ std::ostream &operator<<(std::ostream &os, ft::vector<T> &rsh)
         return (os);
 }
 #endif
-
-//  typename ft::enable_if<(typeid(typename ft::iterator_traits<InputIterator>::iterator_category) == typeid(typename ft::iterator_traits<InputIterator>::iterator_category)), InputIterator>::type* = NULL
