@@ -22,6 +22,7 @@ namespace ft
                 typedef ft::VectIterator <value_type> iterator;
                 typedef ft::ConstVectIterator<value_type> const_iterator;
                 typedef ft::RevereVectIterator<value_type> reverse_iterator;
+                typedef ft::ConstRevereVectIterator<value_type> const_reverse_iterator;
 
                 class BadAlloc: public std::exception
                 {
@@ -74,7 +75,8 @@ namespace ft
                         if (this != &rsh)
                         {
                                 clear();
-                                assign(rsh.begin(), rsh.end());
+                                if (rsh.size())
+                                        assign(rsh.begin(), rsh.end());
                         }
                         return *this;
                 }
@@ -85,8 +87,14 @@ namespace ft
                 */
                 iterator begin(){ return iterator(_data);}
                 const_iterator begin() const {return (const_iterator(_data));}
+                reverse_iterator rbegin() { return reverse_iterator(_data + _size - 1);};
+                const_reverse_iterator rbegin() const { return const_reverse_iterator(_data + _size - 1);};
+
                 iterator end(){ return iterator(_data + _size);}
                 const_iterator end() const {return (const_iterator(_data + _size));}
+                reverse_iterator rend() { return reverse_iterator(_data - 1);}
+                const_reverse_iterator rend() const { return const_reverse_iterator(_data - 1);};
+
 
                 /*
                         Capacity
@@ -113,15 +121,14 @@ namespace ft
                                 {
                                         throw(BadAlloc());
                                 }
-                                if (_size)
+
+                                for (size_type  i = 0; i < _size; i++)
                                 {
-                                        for (size_type  i = 0; i < _size; i++)
-                                        {
-                                                _alloc.construct(new_arr + i,_data[i]);
-                                                _alloc.destroy(_data + i);
-                                        }
-                                        _alloc.deallocate(_data, _capacity);
+                                        _alloc.construct(new_arr + i,_data[i]);
+                                        _alloc.destroy(_data + i);
                                 }
+                                if (_data)
+                                        _alloc.deallocate(_data, _capacity); // moxkil pop and resize
                                 _data = new_arr;
                                 _capacity = n;
                         }
@@ -202,7 +209,7 @@ namespace ft
                 void push_back (const value_type& val)
                 {
                         if (_size + 1 > _capacity)
-                                reserve(_size + DEFAUL_SIZE);
+                                reserve((_size + 1) * 2);
                         _alloc.construct(_data + _size++, val);
                 }
                 
@@ -275,7 +282,9 @@ namespace ft
                {
                        return (_alloc);
                }
-
+               /*
+                        relational operators
+               */
         private:
                 void zero()
                 {
@@ -359,7 +368,63 @@ namespace ft
             size_type _size;
             size_type _capacity;
     };
+        /*
+                Non-member function overloads
+        */
+        template <typename  T, typename Alloc>
+        void swap (vector<T,Alloc>& lsh, vector<T,Alloc>& rsh)
+        {
+                lsh.swap(rsh);
+        }
+
+        template <class T, class Alloc>
+        bool operator== (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rsh)
+        {
+                if (lhs.size() != rsh.size())
+                        return (false);
+                return (ft::eqaul(lhs.begin(), lhs.end(), rsh.begin(), rsh.end()));
+        }
+
+        template <class T, class Alloc>
+        bool operator!= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rsh)
+        {
+                return (!(lhs == rsh));
+        }
+
+        template <class T, class Alloc>
+        bool operator<  (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+        {
+                if (lhs.size() < rhs.size())
+                        return (true);
+                if (lhs.size() > rhs.size())
+                        return (false);
+                return(ft::lexicographical_compare(lhs.begin(),lhs.end(), rhs.begin(), rhs.end()));
+        }
+
+        template <class T, class Alloc>
+        bool operator<=  (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+        {
+                return(!(lhs > rhs));
+        }
+
+        template <class T, class Alloc>
+        bool operator>  (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+        {
+                return (rhs < lhs);
+        }
+
+        template <class T, class Alloc>
+        bool operator>=  (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+        {
+                return(!(lhs < rhs));
+        }
+
+
+
 }
+
+
+
 template <typename T>
 std::ostream &operator<<(std::ostream &os, ft::vector<T> &rsh)
 {

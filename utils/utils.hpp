@@ -90,5 +90,30 @@ namespace ft
         typedef const T* pointer;
         typedef const T& reference;
     };
+
+    template<typename InputIterator1, typename InputIterator2>
+    bool eqaul(InputIterator1 a1, InputIterator1 a2, InputIterator2 b1, InputIterator2 b2)
+    {
+        while(a1 != a2)
+        {
+            if (!(*a1 == *b1))
+                return (false);
+            a1++;
+            b1++;
+        }
+        return (true);
+    }
+    template <class InputIterator1, class InputIterator2>
+    bool lexicographical_compare (InputIterator1 a1, InputIterator1 a2,
+                                InputIterator2 b1, InputIterator2 b2)
+    {
+        while (a1!=a2)
+        {
+            if (b1==b2 || *b1<*a1) return false;
+            else if (*a1<*b1) return true;
+            ++a1; ++b1;
+        }
+        return (b1!=b2);
+    }
 }
 #endif
