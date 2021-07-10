@@ -280,7 +280,7 @@ namespace ft
 
                allocator_type get_allocator() const
                {
-                       return (_alloc);
+                       return (allocator_type(_alloc));
                }
                /*
                         relational operators

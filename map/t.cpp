@@ -1,5 +1,6 @@
 #include <iostream>
 #include <map>
+#include "mapUtils.hpp"
 template <typename T>
 class Node
 {
@@ -87,25 +88,16 @@ class Tree
 
 int main()
 {
-    // Tree<int> t;
-    int i;
-    // // for (int i = 0;i < 10; i++)
-    // //     t.insert(i);
-    srand(time(NULL));
-    // std::cout << std::endl << std::endl;
-    // t.printTree();
-    // std::cout << t.find(-12);
-    std::map<int, int> mapi;
+    std::map<int, int> mp;
 
-    for (int j = 20;j > 9; j--)
-    {
-        i = rand() % 20;
-        // std::cout << i  << " ";
-        mapi.insert(std::pair<int, int>(i, i * 10));
-    }
-    // mapi.insert(std::pair<int, int>(150,12));
-    mapi.insert(mapi.begin(), std::pair<int, int>(130,12));
-    for (std::map<int, int>::iterator it = mapi.begin(); it != mapi.end(); it++)
+    srand(time(NULL));
+    for (int i = 0; i < 20; i++)
+        mp.insert(std::pair<int, int>(rand()%20, 0));
+    for (std::map<int, int>::iterator it = mp.begin(); it != mp.end(); it++)
+        std::cout << it->first << " " << it->second << std::endl;
+    std::cout << "-------------------------" << std::endl;
+    mp.erase(mp.find(10));
+    for (std::map<int, int>::iterator it = mp.begin(); it != mp.end(); it++)
         std::cout << it->first << " " << it->second << std::endl;
     return (0);
 }
