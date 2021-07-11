@@ -1,6 +1,7 @@
 #include <iostream>
 #include <map>
 #include "mapUtils.hpp"
+#include "map.hpp"
 template <typename T>
 class Node
 {
@@ -88,16 +89,17 @@ class Tree
 
 int main()
 {
-    std::map<int, int> mp;
+    ft::map<int, int> mp;
 
     srand(time(NULL));
-    for (int i = 0; i < 20; i++)
-        mp.insert(std::pair<int, int>(rand()%20, 0));
-    for (std::map<int, int>::iterator it = mp.begin(); it != mp.end(); it++)
-        std::cout << it->first << " " << it->second << std::endl;
-    std::cout << "-------------------------" << std::endl;
-    mp.erase(mp.find(10));
-    for (std::map<int, int>::iterator it = mp.begin(); it != mp.end(); it++)
-        std::cout << it->first << " " << it->second << std::endl;
+    for (int i = 1; i< 10; i++)
+        mp.insert(std::make_pair<int, int>(i, 0));
+    // std::cout << (++mp.begin())->_data.first << std::endl;
+    ft::map<int, int>::iterator it = mp.begin();
+    for (int i = 1;i < mp.size();i++ )
+    {
+        std::cout << it->_data.first << std::endl;
+        it++;
+    }
     return (0);
 }

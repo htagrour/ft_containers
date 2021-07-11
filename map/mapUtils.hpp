@@ -16,7 +16,7 @@ namespace ft
             pair(){};
             pair(const first_type& a, const second_type& b): first(a), second(b){}
             template<class U, class V>
-            pair(const pair<U, V>& rhs) { *this = rhs;};
+            // pair(const pair<U, V>& rhs) { *this = rhs;};
             pair& operator= (const pair&rhs)
             {
                 if (this != &rhs)
@@ -71,25 +71,46 @@ namespace ft
             T _data;
             Node *_left;
             Node *_right;
-            Node(T data):_data(data), _left(NULL), _right(NULL){}
-            Node(T data, Node* left, Node* right): _data(data), _left(left),_right(right){};
+            Node *_parent;
+            Node(T data):_data(data), _left(NULL), _right(NULL),_parent(NULL){}
+            Node(T data, Node* left, Node* right, Node* parent): _data(data), _left(left),_right(right), _parent(parent){};
     };
     /*
         iterators
     */
-    template <class T, class U>
+    template <class T>
     class MapIterator
     {
             public:
                 typedef std::bidirectional_iterator_tag iterator_category;
                 typedef std::ptrdiff_t difference_type;
-                typedef pair<T, U> value_type;
+                typedef T value_type;
                 typedef value_type* pointer;
                 typedef value_type& reference;
-                MapIterator():ptr(NULL){};
-                MapIterator(pointer ptr): ptr(ptr){}
-            private:
-                pointer ptr;
+                MapIterator():_ptr(NULL){};
+                MapIterator(pointer ptr): _ptr(ptr){}
+                pointer operator->() const { return (_ptr);};
+                bool operator !=(const MapIterator& rhs) const { return (_ptr != rhs._ptr);} 
+                MapIterator&  operator++(int) 
+                {
+                    if (_ptr)
+                    {
+                        if (_ptr->_right)
+                        {
+                            _ptr = _ptr->_right;
+                            while(_ptr->_left)
+                                _ptr = _ptr->_left;
+                        }
+                        else
+                        {
+                            _ptr = _ptr->_parent;
+                        }
+                    }
+                    // you should stop at last one
+                    return (*this);
+                }
+                private:
+                    pointer _ptr;
     };
 }
 #endif
