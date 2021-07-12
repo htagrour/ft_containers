@@ -89,17 +89,11 @@ class Tree
 
 int main()
 {
-    ft::map<int, int> mp;
+    std::map<int, int> mp;
 
     srand(time(NULL));
     for (int i = 1; i< 10; i++)
         mp.insert(std::make_pair<int, int>(i, 0));
-    // std::cout << (++mp.begin())->_data.first << std::endl;
-    ft::map<int, int>::iterator it = mp.begin();
-    for (int i = 1;i < mp.size();i++ )
-    {
-        std::cout << it->_data.first << std::endl;
-        it++;
-    }
+    std::cout << *(mp.begin()). << std::endl
     return (0);
 }

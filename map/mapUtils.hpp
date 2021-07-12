@@ -90,9 +90,17 @@ namespace ft
                 MapIterator():_ptr(NULL){};
                 MapIterator(pointer ptr): _ptr(ptr){}
                 pointer operator->() const { return (_ptr);};
-                bool operator !=(const MapIterator& rhs) const { return (_ptr != rhs._ptr);} 
-                MapIterator&  operator++(int) 
+                bool operator !=(const MapIterator& rhs) const { return (_ptr != rhs._ptr);}
+                MapIterator operator++(int)
                 {
+                    MapIterator tmp(*this);
+                    ++*this;
+                    return(tmp);
+                }
+                MapIterator&  operator++() 
+                {
+                    pointer tmp;
+
                     if (_ptr)
                     {
                         if (_ptr->_right)
@@ -103,12 +111,63 @@ namespace ft
                         }
                         else
                         {
-                            _ptr = _ptr->_parent;
+                            tmp = _ptr->_parent;
+                            while( tmp != NULL && _ptr == tmp->_right)
+                            {
+                                _ptr = tmp;
+                                tmp = tmp->_parent;
+                            }
+                            _ptr = tmp;
                         }
                     }
-                    // you should stop at last one
                     return (*this);
                 }
+                MapIterator operator--(int)
+                {
+                    MapIterator tmp(*this);
+
+                    --*this;
+                    return(tmp);
+                }
+
+                MapIterator& operator--()
+                {
+                    pointer tmp;
+
+                    if (_ptr)
+                    {
+                        if (_ptr->_left)
+                            _ptr = _ptr->_left;
+                        else
+                        {
+                            tmp = _ptr->_parent;
+                            while(tmp != NULL && _ptr == tmp->_left)
+                            {
+                                _ptr = tmp;
+                                tmp = tmp->_parent;
+                            }
+                            _ptr = tmp;
+                        }
+                    }
+                    return (*this);
+                }
+
+                friend MapIterator operator+(const MapIterator& lhs, size_t n)
+                {
+                    MapIterator tmp(lhs);
+                    for (size_t i = 0; i < n; i++)
+                        tmp++;
+                    return(tmp);
+                }
+
+                friend MapIterator operator-(const MapIterator& lhs, size_t n)
+                {
+                    MapIterator tmp(lhs);
+                    for (size_t i = 0; i < n; i++)
+                        tmp--;
+                    return(tmp);
+                }
+
                 private:
                     pointer _ptr;
     };
