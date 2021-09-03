@@ -35,10 +35,10 @@ int main()
             for (int i = 0; i < 100000; i++)
                 vect.push_back(i);
             std::cout << (vect <= vect);
-            ft::vector<int>::reverse_iterator it;
-            for (it = vect.rbegin(); it != vect.rend(); it++)
+            ft::vector<int>::const_iterator it;
+            for (it = vect.begin(); it != vect.end(); it++)
             {
-                *it *= 4;
+                // *it *= 4;
                 std::cout << *it << std::endl;
             }
 

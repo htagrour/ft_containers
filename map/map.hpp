@@ -1,18 +1,23 @@
 #ifndef MAP_HPP
 #define MAP_HPP
-
-#include "mapUtils.hpp"
+#include "bst.hpp"
+// #include "mapUtils.hpp"
+#include "iterator.hpp"
+#include <iostream>
 namespace ft
 {
     template <class Key, class T, class Compare = std::less<Key>,
-              class Alloc = std::allocator<ft::pair<const Key, T> > >
+              class Alloc = std::allocator<std::pair<const Key, T> > >
     class map
     {
         public:
             typedef Key key_type;
             typedef T mapped_type;
-            typedef std::pair<const key_type, T> value_type;
+            typedef std::pair<key_type, mapped_type> value_type;
             typedef ft::Node<value_type> node;
+            typedef typename node::pointer node_pointer;
+            typedef ft::iterator<node> iterator;
+            typedef ft::iterator<const node> const_iterator;
             typedef Compare key_compare;
             // typedef ###### value_compare;
             typedef Alloc allocator_type;
@@ -22,79 +27,82 @@ namespace ft
             typedef typename allocator_type::const_pointer const_pointer;
             typedef std::size_t size_type;
             typedef std::ptrdiff_t difference_type;
-            typedef ft::MapIterator <node> iterator;
-            // typedef ft::ConstVectIterator<value_type> const_iterator;
-            // typedef ft::RevereVectIterator<value_type> reverse_iterator;
-            // typedef ft::ConstRevereVectIterator<value_type> const_reverse_iterator;
+            typedef ft::Bst<value_type, key_compare, allocator_type> bst;
 
-            explicit map(const key_compare& comp = key_compare(),
-                         const allocator_type &alloc = allocator_type()): _comp(comp), _alloc(alloc)
-                        {
-                            _root = _begin = NULL;
-                            _size = 0;
-                        }
-            template <typename InputIterator>
-            map(InputIterator first, InputIterator last,const key_compare& comp = key_compare(),
-                const allocator_type& alloc = allocator_type()):_comp(comp), _alloc(alloc)
-                {
-                    _root = _begin = NULL;
-                    _size = 0;
-                }
-            map(const map& rhs)
-            {
-                _root = NULL;
-                //*this = rhs
-            }
-            iterator begin() const { return(iterator(_begin));}
-            iterator end() const { return (iterator(NULL));}
-            void insert(value_type data)
-            {
-                node *new_node = new node(data);
-                if (!_root)
-                {
-                    _root = new_node;
-                    _begin = new_node;
-                }
-                else
-                {
-                    node *p = _root;
+            explicit map (const key_compare& comp = key_compare(),
+              const allocator_type& alloc = allocator_type())
+              {
+                  _bst = bst();
+                  _alloc = alloc;
+                  _comp = comp;
+              }
+            
+            // Iterartors
+            iterator begin() { return iterator(_bst.get_begin());}
+            const_iterator begin() const {return const_iterator(_bst.get_begin());}
 
-                    while(p)
-                    {
-                        if (data > p->_data)
-                        {
-                            if (!p->_right)
-                                break;
-                            else
-                                p = p->_right;
-                        }
-                        else
-                        {
-                            if (!p->_left)
-                                break;
-                            else
-                                p = p->_left;   
-                        }
-                    }
-                    new_node->_parent = p;
-                    if (data > p->_data)
-                    {
-                        p->_right = new_node;
-                    }
-                    else
-                        p->_left = new_node;
-                    if (!_begin || data < _begin->_data)
-                        _begin = new_node;
+            iterator end() { return iterator(_bst.get_end());}
+            const_iterator end() const {return const_iterator(_bst.get_end());}
+
+            // Capacity
+            size_type size() const { return _bst.get_size();}
+            size_type max_size() const { return _bst.get_maxSize();}
+            bool empty() const { return !size();}
+
+            // Modifiers
+            // std::pair<iterator,bool> insert (const value_type& val)
+            // {
+            //     std::pair <node*,bool> result = _bst.insert(val); 
+            //     return (std::make_pair<iterator, bool>(result.first, result.second));
+            // }
+
+            template <class InputIterator>
+            void insert (InputIterator first, InputIterator last)
+            {
+                while(first != last)
+                {
+                    insert(*first);            
+                    first++;
                 }
-                _size += 1;
             }
-            size_type size() const { return (_size);};
+            std::pair<iterator, bool> insert(const value_type& k)
+            {
+                std::pair<node_pointer, bool> res = _bst.insert(k);
+                return std::pair<iterator, bool>(iterator(res.first), !res.second);
+            }
+
+            iterator find(const key_type &k)
+            {
+                std::pair<key_type, mapped_type> _pair(k, mapped_type());
+                std::pair<node_pointer,bool> res = _bst.find(_pair);
+
+                if (res.second)
+                    return iterator(res.first);
+                return (end());
+            }
+
+            const_iterator find(const key_type& k) const
+            {
+                std::pair<key_type, mapped_type> _pair(k, mapped_type());
+                std::pair<node_pointer,bool> res = _bst.find(_pair);
+
+                if (res.second)
+                    return const_iterator(res.first);
+                return (end());
+            }
+
+            size_type count (const key_type& k)
+            { 
+                if (find(k) == end())
+                    return 0;
+                return 1;
+            }
+
         private:
-            node *_root;
+            bst _bst;
             key_compare _comp;
             allocator_type _alloc;
-            size_type _size;
-            node *_begin;
+
     };
 }
 #endif

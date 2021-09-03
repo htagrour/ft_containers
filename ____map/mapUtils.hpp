@@ -4,7 +4,7 @@
 
 namespace ft
 {
-    template <class T1, class T2>
+    template <typename T1, typename T2>
     class pair
     {
         public:
@@ -16,7 +16,7 @@ namespace ft
             pair(){};
             pair(const first_type& a, const second_type& b): first(a), second(b){}
             template<class U, class V>
-            // pair(const pair<U, V>& rhs) { *this = rhs;};
+            pair(const pair<U, V>& rhs) { *this = rhs;};
             pair& operator= (const pair&rhs)
             {
                 if (this != &rhs)
@@ -67,7 +67,9 @@ namespace ft
     template <typename T>
     class Node
     {
+
         public:
+            typedef T value_type;
             T _data;
             Node *_left;
             Node *_right;
@@ -87,9 +89,10 @@ namespace ft
                 typedef T value_type;
                 typedef value_type* pointer;
                 typedef value_type& reference;
+
                 MapIterator():_ptr(NULL){};
                 MapIterator(pointer ptr): _ptr(ptr){}
-                pointer operator->() const { return (_ptr);};
+                pointer operator->() const { return (_ptr->_data);};
                 bool operator !=(const MapIterator& rhs) const { return (_ptr != rhs._ptr);}
                 MapIterator operator++(int)
                 {

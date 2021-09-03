@@ -2,6 +2,7 @@
 #include <map>
 #include "mapUtils.hpp"
 #include "map.hpp"
+#include <utility> 
 template <typename T>
 class Node
 {
@@ -89,11 +90,13 @@ class Tree
 
 int main()
 {
-    std::map<int, int> mp;
+    ft::map<int, int> mp;
 
-    srand(time(NULL));
-    for (int i = 1; i< 10; i++)
-        mp.insert(std::make_pair<int, int>(i, 0));
-    std::cout << *(mp.begin()). << std::endl
+    mp.insert(15,19);
+
+    for (ft::map<int, int>::iterator it = mp.begin(); it!= mp.end(); it++)
+    {
+        // std::cout <<;
+    }
     return (0);
 }

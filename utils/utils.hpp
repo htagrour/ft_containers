@@ -1,6 +1,7 @@
 #ifndef UTILS_HPP
 #define UTILS_HPP
 
+#include <cstddef>
 namespace ft
 {
     template<bool B, class T = void>

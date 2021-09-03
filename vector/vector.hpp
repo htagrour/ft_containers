@@ -2,7 +2,9 @@
 #define VECTOR_HPP
 #include "VectorUtils.hpp"
 #include "../utils/utils.hpp"
+#include <iostream>
 #include <exception>
+#include <typeinfo>
 
 #define DEFAUL_SIZE 4
 namespace ft
@@ -20,9 +22,9 @@ namespace ft
                 typedef std::size_t size_type;
                 typedef std::ptrdiff_t difference_type;
                 typedef ft::VectIterator <value_type> iterator;
-                typedef ft::ConstVectIterator<value_type> const_iterator;
-                typedef ft::RevereVectIterator<value_type> reverse_iterator;
-                typedef ft::ConstRevereVectIterator<value_type> const_reverse_iterator;
+                typedef ft::VectIterator<const value_type> const_iterator;
+                typedef ft::RevereVectIterator<iterator> reverse_iterator;
+                typedef ft::RevereVectIterator<const_iterator> const_reverse_iterator;
 
                 class BadAlloc: public std::exception
                 {
@@ -41,6 +43,7 @@ namespace ft
                                         return ("out of range");
                                 }
                 };
+
                 /*
                         constructor/deconstructor
                 */
@@ -105,7 +108,7 @@ namespace ft
                 size_type max_size() const {return _alloc.max_size();}
                 size_type capacity() const { return _capacity;}
 
-                void reserve (size_type n) throw(BadAlloc)
+                void reserve (size_type n)
                 {
                         pointer new_arr;
 
@@ -159,8 +162,8 @@ namespace ft
                         Element access
                 */
                 reference operator[](size_type index) {return _data[index];}
-                const_reference operator[] (size_type n) const{ return _data[index];};
-                reference at(size_type n) throw(OutOfRange)
+                const_reference operator[] (size_type index) const{ return _data[index];};
+                reference at(size_type n)
                 {
                         if (n < 0 || n >= _size)
                                 throw(OutOfRange());
@@ -270,9 +273,9 @@ namespace ft
                         if (_capacity)
                         {
                                 destroy_element(_size);
-                                _alloc.deallocate(_data, _capacity);
+                                // _alloc.deallocate(_data, _capacity);
                         }
-                        zero();
+                        // zero();
                 }
                 /*
                         Allocator
