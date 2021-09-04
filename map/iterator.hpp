@@ -37,16 +37,26 @@ namespace ft
 
                 iterator& operator++()
                 {
+                    pointer tmp;
+
                     if (_ptr)
                     {
                         if (_ptr->_right)
                         {
                             _ptr = _ptr->_right;
-                            while (_ptr->_left)
+                            while (_ptr && _ptr->_left)
                                 _ptr = _ptr->_left;
                         }
                         else
-                            _ptr = _ptr->_parent;
+                        {
+                            tmp = _ptr->_parent;
+                            while(tmp && _ptr == tmp->_right)
+                            {
+                                _ptr = tmp;
+                                tmp = tmp->_parent;
+                            }
+                            _ptr = tmp;
+                        }
                     }
                     return (*this);                                             
                 }
@@ -60,14 +70,22 @@ namespace ft
                 }
                 iterator& operator--()
                 {
+                    pointer tmp;
+
                     if (_ptr)
                     {
                         if (_ptr->_left)
-                        {
                             _ptr = _ptr->_left;
-                        }
                         else
-                            _ptr = _ptr->_parent;
+                        {
+                            tmp = _ptr->_parent;
+                            while(tmp != NULL && _ptr == tmp->_left)
+                            {
+                                _ptr = tmp;
+                                tmp = tmp->_parent;
+                            }
+                            _ptr = tmp;
+                        }
                     }
                     return (*this);
                 }

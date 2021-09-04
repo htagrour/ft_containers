@@ -41,8 +41,9 @@ namespace ft
                 _comp = Compare();
                 _size = 0;
                 _head = NULL;
-                 _begin = _end = _alloc.allocate(1);
+                _begin = _end = _alloc.allocate(1);
             }
+
             pointer get_begin() const { return _begin;}
             pointer get_end() const { return _end;}
             size_type get_size() const { return _size;}
@@ -70,7 +71,7 @@ namespace ft
                     {
                         if (res.first->_right == _end)
                         {
-                            // newNode->_right = _end;
+                            newNode->_right = _end;
                             _end->_parent = newNode;
                         }
                         res.first->_right = newNode;
@@ -79,6 +80,7 @@ namespace ft
                 else
                 {
                     _head = _begin = newNode;
+                    _head->_right = _end;
                     _end->_parent = _head;
                 }
                 _size++;
@@ -111,7 +113,7 @@ namespace ft
                     }
                     else
                     {
-                        if (tmp->_right)
+                        if (tmp->_right && tmp->_right != _end) // make sure to not reach _end node
                             tmp = tmp->_right;
                         else
                             break;
@@ -127,9 +129,6 @@ namespace ft
             size_type _size;
             node_alloc _alloc;
             Compare _comp;
-
     };
-
-
 }
 #endif

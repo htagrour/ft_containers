@@ -9,12 +9,15 @@ int main()
     ft::map<int, int> mp;
     ft::map<int, int> mp1;
 
-    // ft::map<int, int>::iterator it;
     std::map<int,int> mm;
     for (int i = 0; i < 10; i++)
-        mp.insert({i, i*10});
-    for (ft::map<int, int>::iterator it = mp.begin(); it != mp.end(); it++)
+        mp.insert(std::pair<int, int>(i, i*10));
+    ft::map<int, int>::iterator it = mp.begin();
+    while(it != mp.end())
+    {
         std::cout << (*it).first << std::endl;
-
+        it++;
+    }
     std::cout << mp.find(2)->second;
+    return 0;
 }

@@ -37,6 +37,7 @@ namespace ft
         protected:
             pointer ptr;
     };
+    
     /*
         Operators 
     */
