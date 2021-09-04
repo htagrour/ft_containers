@@ -11,12 +11,15 @@ namespace ft
                 typedef std::bidirectional_iterator_tag iterator_category;
                 typedef std::ptrdiff_t difference_type;
                 typedef T value_type;
-                typedef value_type* pointer;
-                typedef value_type& reference;
+                typedef value_type* npointer;
                 typedef typename value_type::value_type base_type;
+                typedef base_type* pointer;
+                typedef base_type& reference;
+
+
 
                 iterator():_ptr(NULL){}
-                iterator(pointer ptr):_ptr(ptr){}
+                iterator(npointer ptr):_ptr(ptr){}
                 iterator(const iterator &rsh) { *this = rsh;}
                 iterator& operator=(const iterator &rsh)
                 {
@@ -37,7 +40,7 @@ namespace ft
 
                 iterator& operator++()
                 {
-                    pointer tmp;
+                    npointer tmp;
 
                     if (_ptr)
                     {
@@ -70,7 +73,7 @@ namespace ft
                 }
                 iterator& operator--()
                 {
-                    pointer tmp;
+                    npointer tmp;
 
                     if (_ptr)
                     {
@@ -89,16 +92,16 @@ namespace ft
                     }
                     return (*this);
                 }
-                base_type& operator*(){ return _ptr->_data;}
-                base_type* operator->(){return &_ptr->_data;}
+                reference operator*(){ return _ptr->_data;}
+                pointer operator->(){return &_ptr->_data;}
 
                 operator iterator<const T>() const {return (iterator<const T>(this->_ptr));}
                 bool operator==(const iterator &rsh) { return _ptr == rsh._ptr;}
                 bool operator!=(const iterator &rsh) { return _ptr != rsh._ptr;}
 
 
-        private:
-            pointer _ptr;
+        protected:
+            npointer _ptr;
     };
 }
 #endif

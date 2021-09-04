@@ -12,12 +12,16 @@ int main()
     std::map<int,int> mm;
     for (int i = 0; i < 10; i++)
         mp.insert(std::pair<int, int>(i, i*10));
-    ft::map<int, int>::iterator it = mp.begin();
-    while(it != mp.end())
+
+    ft::map<int, int>::reverse_iterator it = mp.rbegin();
+    for (int i = 0;i < 5;i++)
     {
-        std::cout << (*it).first << std::endl;
+        std::cout << it->first << std::endl;
         it++;
     }
-    std::cout << mp.find(2)->second;
-    return 0;
+    for (int i = 0; i < 5; i++)
+    {
+        it--;
+        std::cout << it->first << std::endl;
+    }
 }

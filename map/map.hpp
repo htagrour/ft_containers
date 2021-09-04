@@ -1,9 +1,9 @@
 #ifndef MAP_HPP
 #define MAP_HPP
 #include "bst.hpp"
-// #include "mapUtils.hpp"
 #include "iterator.hpp"
 #include <iostream>
+#include "../utils/reverse_iterator.hpp"
 namespace ft
 {
     template <class Key, class T, class Compare = std::less<Key>,
@@ -13,11 +13,9 @@ namespace ft
         public:
             typedef Key key_type;
             typedef T mapped_type;
-            typedef std::pair<key_type, mapped_type> value_type;
+            typedef std::pair<const key_type, mapped_type> value_type;
             typedef ft::Node<value_type> node;
             typedef typename node::pointer node_pointer;
-            typedef ft::iterator<node> iterator;
-            typedef ft::iterator<const node> const_iterator;
             typedef Compare key_compare;
             // typedef ###### value_compare;
             typedef Alloc allocator_type;
@@ -28,6 +26,10 @@ namespace ft
             typedef std::size_t size_type;
             typedef std::ptrdiff_t difference_type;
             typedef ft::Bst<value_type, key_compare, allocator_type> bst;
+            typedef ft::iterator<node> iterator;
+            typedef ft::iterator<const node> const_iterator;
+            typedef ft::reverseIterator<iterator> reverse_iterator;
+            typedef ft::reverseIterator<const_iterator> const_reverse_iterator;
 
             explicit map (const key_compare& comp = key_compare(),
               const allocator_type& alloc = allocator_type())
@@ -43,6 +45,12 @@ namespace ft
 
             iterator end() { return iterator(_bst.get_end());}
             const_iterator end() const {return const_iterator(_bst.get_end());}
+
+            reverse_iterator rbegin() { return reverse_iterator(_bst.get_rbegin());}
+            const_reverse_iterator rbegin() const {return const_reverse_iterator(_bst.get_rbegin());}
+
+            reverse_iterator rend() { return reverse_iterator(_bst.get_rend());}
+            const_reverse_iterator rend() const {return const_iterator(_bst.get_rend());}
 
             // Capacity
             size_type size() const { return _bst.get_size();}

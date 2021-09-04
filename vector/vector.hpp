@@ -5,7 +5,7 @@
 #include <iostream>
 #include <exception>
 #include <typeinfo>
-
+#include "../utils/reverse_iterator.hpp"
 #define DEFAUL_SIZE 4
 namespace ft
 {
@@ -23,8 +23,8 @@ namespace ft
                 typedef std::ptrdiff_t difference_type;
                 typedef ft::VectIterator <value_type> iterator;
                 typedef ft::VectIterator<const value_type> const_iterator;
-                typedef ft::RevereVectIterator<iterator> reverse_iterator;
-                typedef ft::RevereVectIterator<const_iterator> const_reverse_iterator;
+                typedef ft::reverseIterator<iterator> reverse_iterator;
+                typedef ft::reverseIterator<const_iterator> const_reverse_iterator;
 
                 class BadAlloc: public std::exception
                 {

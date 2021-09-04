@@ -41,11 +41,14 @@ namespace ft
                 _comp = Compare();
                 _size = 0;
                 _head = NULL;
-                _begin = _end = _alloc.allocate(1);
+                _end = _alloc.allocate(1);
+                _alloc.construct(_end, node(value_type()));
             }
 
             pointer get_begin() const { return _begin;}
             pointer get_end() const { return _end;}
+            pointer get_rbegin() const { return _end->_parent;}
+            pointer get_rend() const { return _begin->_parent;}
             size_type get_size() const { return _size;}
             size_type get_maxSize() const { return _alloc.max_size();}
 
