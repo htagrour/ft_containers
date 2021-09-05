@@ -18,9 +18,9 @@ namespace ft
             reverseIterator(const reverseIterator<Iter> &rsh) { this->ptr = rsh.base();}
 
             reverseIterator& operator++() {Iterator::operator--(); return (*this);}  
-            reverseIterator operator++(int) { return(Iterator::operator--(1)); }
+            reverseIterator operator++(int) { return(Iterator::operator--(0)); }
             reverseIterator& operator--() { Iterator::operator++(); return (*this);}  
-            reverseIterator operator--(int) { return (Iterator::operator++(1)); }
+            reverseIterator operator--(int) { return (Iterator::operator++(0)); }
             Iterator base() const { return (*this);}
     };
 

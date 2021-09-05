@@ -58,31 +58,33 @@ namespace ft
             bool empty() const { return !size();}
 
             // Modifiers
-            // std::pair<iterator,bool> insert (const value_type& val)
-            // {
-            //     std::pair <node*,bool> result = _bst.insert(val); 
-            //     return (std::make_pair<iterator, bool>(result.first, result.second));
-            // }
 
-            template <class InputIterator>
-            void insert (InputIterator first, InputIterator last)
-            {
-                while(first != last)
-                {
-                    insert(*first);            
-                    first++;
-                }
-            }
             std::pair<iterator, bool> insert(const value_type& k)
             {
                 std::pair<node_pointer, bool> res = _bst.insert(k);
                 return std::pair<iterator, bool>(iterator(res.first), !res.second);
             }
 
+            iterator insert(iterator position, const value_type& value)
+            {
+
+            }
+
+            template <class InputIterator>
+            void insert (InputIterator first, InputIterator last)
+            {
+                //check if these Iterators are valide
+                while(first != last)
+                {
+                    insert(*first);            
+                    first++;
+                }
+            }
+
+
             iterator find(const key_type &k)
             {
-                std::pair<key_type, mapped_type> _pair(k, mapped_type());
-                std::pair<node_pointer,bool> res = _bst.find(_pair);
+                std::pair<node_pointer,bool> res = find_helper(k);
 
                 if (res.second)
                     return iterator(res.first);
@@ -91,9 +93,7 @@ namespace ft
 
             const_iterator find(const key_type& k) const
             {
-                std::pair<key_type, mapped_type> _pair(k, mapped_type());
-                std::pair<node_pointer,bool> res = _bst.find(_pair);
-
+                std::pair<node_pointer,bool> res = find_helper(k);
                 if (res.second)
                     return const_iterator(res.first);
                 return (end());
@@ -101,11 +101,15 @@ namespace ft
 
             size_type count (const key_type& k)
             { 
-                if (find(k) == end())
-                    return 0;
-                return 1;
+                return (find_helper(k).second);
             }
-
+            
+        private:
+            std::pair<node_pointer,bool> find_helper(const key_type& k)
+            {
+                std::pair<key_type, mapped_type> _pair(k, mapped_type());
+                return (_bst.find(_pair));
+            }
         private:
             bst _bst;
             key_compare _comp;

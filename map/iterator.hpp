@@ -78,7 +78,11 @@ namespace ft
                     if (_ptr)
                     {
                         if (_ptr->_left)
+                        {
                             _ptr = _ptr->_left;
+                            while(_ptr && _ptr->_right)
+                                _ptr = _ptr->_right;
+                        }
                         else
                         {
                             tmp = _ptr->_parent;
@@ -92,10 +96,9 @@ namespace ft
                     }
                     return (*this);
                 }
-                reference operator*(){ return _ptr->_data;}
-                pointer operator->(){return &_ptr->_data;}
-
-                operator iterator<const T>() const {return (iterator<const T>(this->_ptr));}
+                reference operator*() { return _ptr->_data;}
+                pointer operator->(){ return &_ptr->_data;}
+                operator iterator<const T>() const { return (iterator<const T>(this->_ptr));}
                 bool operator==(const iterator &rsh) { return _ptr == rsh._ptr;}
                 bool operator!=(const iterator &rsh) { return _ptr != rsh._ptr;}
 

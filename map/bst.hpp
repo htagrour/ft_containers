@@ -42,13 +42,14 @@ namespace ft
                 _size = 0;
                 _head = NULL;
                 _end = _alloc.allocate(1);
+                // _rend = _alloc.allocate(1);
                 _alloc.construct(_end, node(value_type()));
             }
 
             pointer get_begin() const { return _begin;}
             pointer get_end() const { return _end;}
             pointer get_rbegin() const { return _end->_parent;}
-            pointer get_rend() const { return _begin->_parent;}
+            pointer get_rend() const { return _rend;}
             size_type get_size() const { return _size;}
             size_type get_maxSize() const { return _alloc.max_size();}
 
@@ -83,6 +84,7 @@ namespace ft
                 else
                 {
                     _head = _begin = newNode;
+                    // _begin->_left = _rend;
                     _head->_right = _end;
                     _end->_parent = _head;
                 }
@@ -129,6 +131,7 @@ namespace ft
             pointer _head;
             pointer _begin;
             pointer _end;
+            pointer _rend;
             size_type _size;
             node_alloc _alloc;
             Compare _comp;

@@ -1,35 +1,43 @@
-#include "list/List.hpp"
 #include <iostream>
 #include <list>
-
-template <typename T>
-void print(T& var)
+namespace ft
 {
-    for(typename T::reverse_iterator it = var.rbegin() ; it != var.rend(); it++)
-        std::cout << *it << std::endl;
-    std::cout << "IS_EMPTY: "<< var.empty() << std::endl;
-    std::cout << "SIZE: "<< var.size() << std::endl;
-    std::cout << "FRONT :" << var.front() << std::endl;
-    std::cout << "BACK :" << var.back() << std::endl;
-    std::cout << "MAX_SIZE: " << var.max_size() << std::endl;
+    
+    class test
+    {
+        private:
+            std::string name;
+            int number;
+        public:
+            test(std::string name)
+            {
+                this->name = name;
+                this->number = 12;
+            }
+            std::string getName() const { return name;}
+            int getNum() const { return number;}
+            operator int() { return 1000;}
+
+    };
+
+    int operator+(int i, const test&t)
+    {
+        return (100);
+    }
+
+    std::ostream &operator <<(std::ostream &os, const test &T)
+    {
+        os << T.getName() << " heloo wlr" << std::endl;
+        return os;
+    }
 }
 
 int main()
 {
-    {
-        std::cout << "-----LIST--------" << std::endl;
-        ft::list<int> _listi;
-        ft::list<int> _listi1;
+    ft::test t("hamza");
+    int res = 1 + t;
 
-        std::cout << "IS_EMPTY: "<< _listi.empty() << std::endl;
-        for (int i = 1; i < 100;i++)
-            _listi.push_front(i);
-        _listi.assign(100,1);
-        _listi1.assign(_listi.rbegin(), _listi.rend());
-        // _listi.pop_front();
-        print< ft::list<int> >(_listi1);
-        std::cout << "-----------------" << std::endl;
-    }
-
+    int cast = t;
+    std::cout << res << std::endl;
     return (0);
 }
