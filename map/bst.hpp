@@ -44,6 +44,7 @@ namespace ft
                 _end = _alloc.allocate(1);
                 // _rend = _alloc.allocate(1);
                 _alloc.construct(_end, node(value_type()));
+                _begin = _end;
             }
 
             pointer get_begin() const { return _begin;}
@@ -84,7 +85,6 @@ namespace ft
                 else
                 {
                     _head = _begin = newNode;
-                    // _begin->_left = _rend;
                     _head->_right = _end;
                     _end->_parent = _head;
                 }
@@ -99,7 +99,7 @@ namespace ft
                 pointer tmp;
                 bool found = false;
 
-                if (!_head)
+                if (!_size)
                     return std::pair<pointer, bool>(tmp, found);
                 tmp = _head;
                 while(tmp)

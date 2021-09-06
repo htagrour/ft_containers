@@ -81,7 +81,7 @@ namespace ft
                 }
             }
 
-
+            //Operations
             iterator find(const key_type &k)
             {
                 std::pair<node_pointer,bool> res = find_helper(k);
@@ -104,6 +104,34 @@ namespace ft
                 return (find_helper(k).second);
             }
             
+            iterator lower_bound (const key_type& k)
+            {
+                iterator it = begin();
+                for(; it != end(); it++)
+                    if (!_comp(it->first, k)) // this is a shitty algorithm try to optimize it O(n)
+                        break;                 // you pieace of shit
+                return it;
+            }
+
+            const_iterator lower_bound (const key_type& k) const //check this if it work
+            {
+                return lower_bound(k);
+            }
+
+            iterator upper_bound (const key_type& k)
+            {
+                iterator it = begin();
+                for(; it != end(); it++)
+                    if (_comp(it->first, k))
+                        break;
+                return it;
+            }
+            const_iterator upper_bound (const key_type& k) const //check this if it work
+            {
+                return upper_bound(k);
+            }
+            //Allocator
+            allocator_type get_allocator() const { return _alloc;}
         private:
             std::pair<node_pointer,bool> find_helper(const key_type& k)
             {

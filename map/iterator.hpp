@@ -96,7 +96,7 @@ namespace ft
                     }
                     return (*this);
                 }
-                reference operator*() { return _ptr->_data;}
+                reference operator*() { return _ptr->_data;} // const iterartor not fixed yet
                 pointer operator->(){ return &_ptr->_data;}
                 operator iterator<const T>() const { return (iterator<const T>(this->_ptr));}
                 bool operator==(const iterator &rsh) { return _ptr == rsh._ptr;}

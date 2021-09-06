@@ -1,52 +1,29 @@
-#include <exception>
+// C++ function for illustration
+// map::lower_bound() function
+#include <map>
 #include <iostream>
-// allocators >>
-#include "list/ListUtils.hpp"
-// #include "list/List.hpp"
-#include <memory>
-#include <list>
-#include <type_traits>
-#include "vector/vector.hpp"
-#include <vector>
-#include <typeinfo>
-class Test
-{
-    public:
-        Test(int i):_data(i){ std::cout << "Const called\n";}
-        ~Test(){std::cout << "Destr called\n"; _data = 0;};
-        int _data;
-};
-template<typename T>
-void print_shit(T container)
-{
-    for (typename T::iterator it = container.begin(); it != container.end();it++)
-        std::cout << *it << std::endl;
-}
-
+using namespace std;
 int main()
 {
+ 
+    // initialize container
+    map<int, int> mp;
+ 
+    // insert elements in random order
+    mp.insert({ 2, 30 });
+    mp.insert({ 1, 10 });
+    mp.insert({ 5, 50 });
+    mp.insert({ 4, 40 });
+    for (auto it = mp.begin(); it != mp.end(); it++)
     {
-        ft::vector<int> vect;
-        ft::vector<int> f(0,100000);
-        int *p;
-
-        try
-        {
-            for (int i = 0; i < 100000; i++)
-                vect.push_back(i);
-            std::cout << (vect <= vect);
-            ft::vector<int>::const_iterator it;
-            for (it = vect.begin(); it != vect.end(); it++)
-            {
-                // *it *= 4;
-                std::cout << *it << std::endl;
-            }
-
-        }
-        catch(const std::exception& e)
-        {
-            std::cerr << e.what() << '\n';
-        }
+        cout << (*it).first << " " <<
+                              (*it).second << endl;
     }
-    return (0);
+ 
+    // when 2 is present
+    int i = 3;
+    auto it = mp.lower_bound(i);
+    cout << "The lower bound of key "<< i<< " is ";
+    cout << (*it).first << " " << (*it).second << endl;
+    return 0;
 }
