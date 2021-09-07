@@ -4,7 +4,7 @@
 #include <time.h>
 #include <chrono>
 
-#define MAX_RAM 42949600
+#define MAX_RAM 4294960000
 #define BUFFER_SIZE 4096
 struct Buffer
 {
@@ -23,7 +23,7 @@ void The_test(std::string desc)
     std::cout << "---------" << desc << "-----------" << std::endl;
     // std::cout << map.max_size() << std::endl;
     auto begin = std::chrono::high_resolution_clock::now();
-    for (int i = 0; i < COUNT; i++)
+    for (int i = COUNT; i > 0; i--)
         map.insert(std::pair<int, int>(i, i * 10));
     // std::cout << "----Citerator-----" << std::endl;
     // for(typename T::const_iterator it = map.begin(); it != map.end(); it++)
