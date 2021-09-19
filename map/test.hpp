@@ -21,42 +21,47 @@ void The_test(std::string desc)
     T map;
     // std::ofstream os (desc + ".res");
     std::cout << "---------" << desc << "-----------" << std::endl;
-    // std::cout << map.max_size() << std::endl;
+    std::cout << map.max_size() << std::endl;
     auto begin = std::chrono::high_resolution_clock::now();
     for (int i = COUNT; i > 0; i--)
-        map.insert(std::pair<int, int>(i, i * 10));
+        map.insert(std::pair<int, int>(rand() % COUNT, i));
     // std::cout << "----Citerator-----" << std::endl;
     // for(typename T::const_iterator it = map.begin(); it != map.end(); it++)
     //     std::cout << (*it).first << std::endl;
 
-    // std::cout << "----Iterator------" << std::endl;
-    // for(typename T::iterator it = map.begin(); it != map.end(); it++)
-    //     std::cout << it->first << std::endl;
-    // std::cout << "----RIterator------" << std::endl;
-    // for(typename T::reverse_iterator it = map.rbegin(); it != map.rend(); it++)
-    //     std::cout << it->first << std::endl;
-    // std::cout << "----FIND-----------" << std::endl;
-    // if (map.find(-12) != map.end())
-    //     std::cout << "-12 is found" << std::endl;
-    // else
-    //     std::cout << "-12 is not found" << std::endl;
-    // if (map.find(66) != map.end())
-    //     std::cout << "66 is found" << std::endl;
-    // else
-    //     std::cout << "66 is not found" << std::endl;
-    // typename T::iterator it = map.lower_bound(-122);
-    // if (it == map.end())
-    //     std::cout << "out of bound" << std::endl;
-    // else
-    //     std::cout << it->first << std::endl;
-    // typename T::iterator it1 = map.lower_bound(17);
-    // if (it1 == map.end())
-    //     std::cout << "out of bound" << std::endl;
-    // else
-    //     std::cout << it1->first << std::endl;
+    std::cout << "----Iterator------" << std::endl;
+    unsigned int prev = map.begin()->first;
+    for(typename T::iterator it = map.begin(); it != map.end(); it++)
+    {
+        if (prev > it->first)
+            {std::cout << "ERROR\n";break;}
+        std::cout << it->first << std::endl;
+    }
+    std::cout << "----RIterator------" << std::endl;
+    for(typename T::reverse_iterator it = map.rbegin(); it != map.rend(); it++)
+        std::cout << it->first << std::endl;
+    std::cout << "----FIND-----------" << std::endl;
+    if (map.find(-12) != map.end())
+        std::cout << "-12 is found" << std::endl;
+    else
+        std::cout << "-12 is not found" << std::endl;
+    if (map.find(66) != map.end())
+        std::cout << "66 is found" << std::endl;
+    else
+        std::cout << "66 is not found" << std::endl;
+    typename T::iterator it = map.lower_bound(-122);
+    if (it == map.end())
+        std::cout << "out of bound" << std::endl;
+    else
+        std::cout << it->first << std::endl;
+    typename T::iterator it1 = map.lower_bound(18000);
+    if (it1 == map.end())
+        std::cout << "out of bound" << std::endl;
+    else
+        std::cout << it1->first << std::endl;
     auto end = std::chrono::high_resolution_clock::now();
     auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin);
-    std::cout << elapsed.count() << std::endl;
+    std::cout << elapsed.count()/1000000000 << std::endl;
     // os.close();
 }
 

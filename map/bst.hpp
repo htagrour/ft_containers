@@ -37,7 +37,7 @@ namespace ft
             
             Bst()
             {
-                _alloc = allocator_type();
+                _alloc = node_alloc();
                 _comp = Compare();
                 _size = 0;
                 _head = NULL;
@@ -101,6 +101,12 @@ namespace ft
 
                 if (!_size)
                     return std::pair<pointer, bool>(tmp, found);
+                //optimize // check for extr
+                if (val.first != _begin->_data.first && _comp(val.first, _begin->_data.first))
+                    return std::pair<pointer, bool>(_begin, found);
+                if (val.first != _end->_parent->_data.first
+                    && !_comp(val.first, _end->_parent->_data.first))
+                    return std::pair<pointer, bool>(_end->_parent, found);
                 tmp = _head;
                 while(tmp)
                 {
@@ -118,7 +124,7 @@ namespace ft
                     }
                     else
                     {
-                        if (tmp->_right && tmp->_right != _end) // make sure to not reach _end node
+                        if (tmp->_right && tmp->_right != _end)
                             tmp = tmp->_right;
                         else
                             break;
