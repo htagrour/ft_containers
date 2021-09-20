@@ -4,16 +4,17 @@
 #include "iterator.hpp"
 #include <iostream>
 #include "../utils/reverse_iterator.hpp"
+#include "utils.hpp"
 namespace ft
 {
     template <class Key, class T, class Compare = std::less<Key>,
-              class Alloc = std::allocator<std::pair<const Key, T> > >
+              class Alloc = std::allocator<ft::pair<const Key, T> > >
     class map
     {
         public:
             typedef Key key_type;
             typedef T mapped_type;
-            typedef std::pair<const key_type, mapped_type> value_type;
+            typedef ft::pair<const key_type, mapped_type> value_type;
             typedef ft::Node<value_type> node;
             typedef typename node::pointer node_pointer;
             typedef Compare key_compare;
@@ -59,10 +60,10 @@ namespace ft
 
             // Modifiers
 
-            std::pair<iterator, bool> insert(const value_type& k)
+            ft::pair<iterator, bool> insert(const value_type& k)
             {
-                std::pair<node_pointer, bool> res = _bst.insert(k);
-                return std::pair<iterator, bool>(iterator(res.first), !res.second);
+                ft::pair<node_pointer, bool> res = _bst.insert(k);
+                return ft::pair<iterator, bool>(iterator(res.first), !res.second);
             }
 
             iterator insert(iterator position, const value_type& value)
@@ -84,7 +85,7 @@ namespace ft
             //Operations
             iterator find(const key_type &k)
             {
-                std::pair<node_pointer,bool> res = find_helper(k);
+                ft::pair<node_pointer,bool> res = find_helper(k);
 
                 if (res.second)
                     return iterator(res.first);
@@ -93,7 +94,7 @@ namespace ft
 
             const_iterator find(const key_type& k) const
             {
-                std::pair<node_pointer,bool> res = find_helper(k);
+                ft::pair<node_pointer,bool> res = find_helper(k);
                 if (res.second)
                     return const_iterator(res.first);
                 return (end());
@@ -106,36 +107,30 @@ namespace ft
             
             iterator lower_bound (const key_type& k)
             {
-                iterator it = begin();
-                for(; it != end(); it++)
-                    if (!_comp(it->first, k)) // this is a shitty algorithm try to optimize it O(n)
-                        break;                 // you pieace of shit
-                return it;
+                ft::pair<key_type, mapped_type> tmp(k, mapped_type());
+                return (iterator(_bst.lower_bound(tmp)));
             }
 
             const_iterator lower_bound (const key_type& k) const //check this if it work
             {
-                return lower_bound(k);
+                ft::pair<key_type, mapped_type> tmp(k, mapped_type());
+                return (const_iterator(_bst.lower_bound(tmp)));
             }
 
-            iterator upper_bound (const key_type& k)
-            {
-                iterator it = begin();
-                for(; it != end(); it++)
-                    if (_comp(it->first, k))
-                        break;
-                return it;
-            }
-            const_iterator upper_bound (const key_type& k) const //check this if it work
-            {
-                return upper_bound(k);
-            }
+            // iterator upper_bound (const key_type& k)
+            // {
+            //     return (iterator(_bst))
+            // }
+            // const_iterator upper_bound (const key_type& k) const //check this if it work
+            // {
+            //     return upper_bound(k);
+            // }
             //Allocator
             allocator_type get_allocator() const { return _alloc;}
         private:
-            std::pair<node_pointer,bool> find_helper(const key_type& k)
+            ft::pair<node_pointer,bool> find_helper(const key_type& k)
             {
-                std::pair<key_type, mapped_type> _pair(k, mapped_type());
+                ft::pair<key_type, mapped_type> _pair(k, mapped_type());
                 return (_bst.find(_pair));
             }
         private:

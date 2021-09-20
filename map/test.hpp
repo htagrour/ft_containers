@@ -22,9 +22,12 @@ void The_test(std::string desc)
     // std::ofstream os (desc + ".res");
     std::cout << "---------" << desc << "-----------" << std::endl;
     std::cout << map.max_size() << std::endl;
-    auto begin = std::chrono::high_resolution_clock::now();
-    for (int i = COUNT; i > 0; i--)
-        map.insert(std::pair<int, int>(rand() % COUNT, i));
+    for (int i = 10; i > 0; i--)
+    {
+        int r = rand() % 10;
+        std::cout << r << std::endl;
+        map.insert(ft::pair<int, int>(r, i));
+    }
     // std::cout << "----Citerator-----" << std::endl;
     // for(typename T::const_iterator it = map.begin(); it != map.end(); it++)
     //     std::cout << (*it).first << std::endl;
@@ -37,9 +40,9 @@ void The_test(std::string desc)
             {std::cout << "ERROR\n";break;}
         std::cout << it->first << std::endl;
     }
-    std::cout << "----RIterator------" << std::endl;
-    for(typename T::reverse_iterator it = map.rbegin(); it != map.rend(); it++)
-        std::cout << it->first << std::endl;
+    // std::cout << "----RIterator------" << std::endl;
+    // for(typename T::reverse_iterator it = map.rbegin(); it != map.rend(); it++)
+    //     std::cout << it->first << std::endl;
     std::cout << "----FIND-----------" << std::endl;
     if (map.find(-12) != map.end())
         std::cout << "-12 is found" << std::endl;
@@ -49,20 +52,14 @@ void The_test(std::string desc)
         std::cout << "66 is found" << std::endl;
     else
         std::cout << "66 is not found" << std::endl;
-    typename T::iterator it = map.lower_bound(-122);
+    typename T::iterator it = map.lower_bound(1);
     if (it == map.end())
         std::cout << "out of bound" << std::endl;
     else
         std::cout << it->first << std::endl;
-    typename T::iterator it1 = map.lower_bound(18000);
-    if (it1 == map.end())
-        std::cout << "out of bound" << std::endl;
-    else
-        std::cout << it1->first << std::endl;
-    auto end = std::chrono::high_resolution_clock::now();
-    auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin);
-    std::cout << elapsed.count()/1000000000 << std::endl;
     // os.close();
 }
 
 #endif
+
+rm -rf $HOME/.brew && git clone --depth=1 https://github.com/Homebrew/brew $HOME/.brew && echo 'export PATH=$HOME/.brew/bin:$PATH' >> $HOME/.zshrc && source $HOME/.zshrc && brew update

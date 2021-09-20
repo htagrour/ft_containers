@@ -2,6 +2,7 @@
 #define BST_HPP
 #include <iostream>
 #include <memory>
+#include "utils.hpp"
 #include <functional>
 
 namespace ft
@@ -54,10 +55,10 @@ namespace ft
             size_type get_size() const { return _size;}
             size_type get_maxSize() const { return _alloc.max_size();}
 
-            std::pair<pointer, bool> insert(const value_type &val)
+            ft::pair<pointer, bool> insert(const value_type &val)
             {
                 pointer newNode;
-                std::pair<pointer, bool> res = find(val);
+                ft::pair<pointer, bool> res = find(val);
 
                 if (res.second)
                     return res;
@@ -94,19 +95,19 @@ namespace ft
             }
 
 
-            std::pair<pointer, bool> find(const value_type& val)
+            ft::pair<pointer, bool> find(const value_type& val)
             {
                 pointer tmp;
                 bool found = false;
 
                 if (!_size)
-                    return std::pair<pointer, bool>(tmp, found);
+                    return ft::pair<pointer, bool>(tmp, found);
                 //optimize // check for extr
                 if (val.first != _begin->_data.first && _comp(val.first, _begin->_data.first))
-                    return std::pair<pointer, bool>(_begin, found);
+                    return ft::pair<pointer, bool>(_begin, found);
                 if (val.first != _end->_parent->_data.first
                     && !_comp(val.first, _end->_parent->_data.first))
-                    return std::pair<pointer, bool>(_end->_parent, found);
+                    return ft::pair<pointer, bool>(_end->_parent, found);
                 tmp = _head;
                 while(tmp)
                 {
@@ -130,7 +131,57 @@ namespace ft
                             break;
                     }
                 }
-                return std::pair<pointer, bool>(tmp, found);
+                return ft::pair<pointer, bool>(tmp, found);
+            }
+
+            pointer lower_bound(const value_type& val)
+            {
+                pointer tmp = _head;
+
+                if (_size)
+                {
+                    if (!_comp(_begin->_data.first, val.first))
+                        return _begin;
+                    while(tmp != _end)
+                    {
+                        if (!_comp(tmp->_data.first, val.first))
+                        {
+                            while(tmp->_left && !_comp(tmp->_left->_data.first,val.first))
+                                tmp = tmp->_left;
+                            return (tmp);
+                        }
+                        tmp = tmp->_right;
+                    }
+                    return (tmp);
+                }
+                else
+                    return (_end);
+            }
+
+            pointer upper_bound(const value_type& val)
+            {
+                pointer tmp = _head;
+
+                if (_size)
+                {
+                    if (!_comp(_begin->_data.first, val.first))
+                        return _begin;
+                    while(tmp != _end)
+                    {
+                        if (!_comp(tmp->_data.first, val.first))
+                        {
+                            std::cout << tmp->_data.first << std::endl;
+                            while(tmp->_left && !_comp(tmp->_left->_data.first,val.first))
+                                tmp = tmp->_left;
+                            if (!tmp->_right)
+                                return (tmp);
+                        }
+                        tmp = tmp->_right;
+                    }
+                    return (tmp);
+                }
+                else
+                    return (_end);
             }
 
         public:
