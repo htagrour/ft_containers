@@ -24,7 +24,7 @@ void The_test(std::string desc)
     std::cout << map.max_size() << std::endl;
     for (int i = 10; i > 0; i--)
     {
-        int r = rand() % 10;
+        int r = rand() % 100;
         std::cout << r << std::endl;
         map.insert(ft::pair<int, int>(r, i));
     }
@@ -52,7 +52,7 @@ void The_test(std::string desc)
         std::cout << "66 is found" << std::endl;
     else
         std::cout << "66 is not found" << std::endl;
-    typename T::iterator it = map.lower_bound(1);
+    typename T::iterator it = map.lower_bound(30);
     if (it == map.end())
         std::cout << "out of bound" << std::endl;
     else
@@ -61,5 +61,3 @@ void The_test(std::string desc)
 }
 
 #endif
-
-rm -rf $HOME/.brew && git clone --depth=1 https://github.com/Homebrew/brew $HOME/.brew && echo 'export PATH=$HOME/.brew/bin:$PATH' >> $HOME/.zshrc && source $HOME/.zshrc && brew update

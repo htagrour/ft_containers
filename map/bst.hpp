@@ -142,13 +142,16 @@ namespace ft
                 {
                     if (!_comp(_begin->_data.first, val.first))
                         return _begin;
-                    while(tmp != _end)
+                    if (_comp(_end->_parent->_data.first, val.first))
+                        return (_end);
+                    while(tmp && tmp != _end)
                     {
                         if (!_comp(tmp->_data.first, val.first))
                         {
-                            while(tmp->_left && !_comp(tmp->_left->_data.first,val.first))
+                            while(tmp && !_comp(tmp->_data.first, val.first))
                                 tmp = tmp->_left;
-                            return (tmp);
+                            if (tmp->_data.first == val.first || !tmp->_right)
+                                return tmp;
                         }
                         tmp = tmp->_right;
                     }
@@ -165,20 +168,29 @@ namespace ft
                 if (_size)
                 {
                     if (!_comp(_begin->_data.first, val.first))
-                        return _begin;
-                    while(tmp != _end)
+                        return (_begin);
+                    if (_comp(_end->_data.first, val.first))
+                        return (_end);
+                    while(tmp && tmp != _end)
                     {
                         if (!_comp(tmp->_data.first, val.first))
                         {
-                            std::cout << tmp->_data.first << std::endl;
-                            while(tmp->_left && !_comp(tmp->_left->_data.first,val.first))
+                            while((!_comp(tmp->_data.first, val.first)))
+                            {
+                                if (tmp->_data.first == val.first)
+                                    break;
+                                if (!tmp->_left)
+                                    break;
                                 tmp = tmp->_left;
-                            if (!tmp->_right)
-                                return (tmp);
+                            }
+                            std::cout << tmp->_data.first << std::end;
+                            return (tmp);
                         }
+                        if (!tmp->_right)
+                            break;
                         tmp = tmp->_right;
                     }
-                    return (tmp);
+                    return tmp;
                 }
                 else
                     return (_end);
