@@ -7,6 +7,17 @@
 
 namespace ft
 {
+    template <typename v1>
+    struct vect3
+    {
+        vect3(v1 value, bool isExist, bool toLeft):\
+        value(value),isExist(isExist),toLeft(toLeft){};
+
+        v1 value;
+        bool isExist;
+        bool toLeft;
+    };
+
     template <typename T>
     struct Node
     {
@@ -22,7 +33,8 @@ namespace ft
         value_type _data;
         pointer _left;
         pointer _right;
-        pointer _parent;  
+        pointer _parent;
+        bool isBlack;
     };
 
     template<class T, class Compare , class Alloc >
@@ -30,11 +42,11 @@ namespace ft
     {
         public:
             typedef T value_type;
-            typedef Node<value_type> node;
-            typedef typename node::pointer pointer;
+            typedef Node<value_type> node_value;
+            typedef node_value* pointer;
             typedef size_t size_type;
             typedef Alloc allocator_type;
-            typedef typename allocator_type::template rebind<node>::other node_alloc;
+            typedef typename allocator_type::template rebind<node_value>::other node_alloc;
             
             Bst()
             {
@@ -43,8 +55,7 @@ namespace ft
                 _size = 0;
                 _head = NULL;
                 _end = _alloc.allocate(1);
-                // _rend = _alloc.allocate(1);
-                _alloc.construct(_end, node(value_type()));
+                _alloc.construct(_end, node_value(value_type()));
                 _begin = _end;
             }
 
@@ -55,148 +66,244 @@ namespace ft
             size_type get_size() const { return _size;}
             size_type get_maxSize() const { return _alloc.max_size();}
 
-            ft::pair<pointer, bool> insert(const value_type &val)
+            void insert(const value_type& val)
             {
                 pointer newNode;
-                ft::pair<pointer, bool> res = find(val);
-
-                if (res.second)
-                    return res;
-                newNode = _alloc.allocate(1);
-                _alloc.construct(newNode, node(val));
-                if (_size)
-                {
-                    newNode->_parent = res.first;
-                    if(_comp(val.first, res.first->_data.first))
-                    {
-                        if (res.first == _begin)
-                            _begin = newNode;
-                        res.first->_left = newNode;
-                    }
-                    else
-                    {
-                        if (res.first->_right == _end)
-                        {
-                            newNode->_right = _end;
-                            _end->_parent = newNode;
-                        }
-                        res.first->_right = newNode;
-                    }
-                }
-                else
-                {
-                    _head = _begin = newNode;
-                    _head->_right = _end;
-                    _end->_parent = _head;
-                }
-                _size++;
-                res.first = newNode;
-                return res;
-            }
-
-
-            ft::pair<pointer, bool> find(const value_type& val)
-            {
-                pointer tmp;
-                bool found = false;
-
-                if (!_size)
-                    return ft::pair<pointer, bool>(tmp, found);
-                //optimize // check for extr
-                if (val.first != _begin->_data.first && _comp(val.first, _begin->_data.first))
-                    return ft::pair<pointer, bool>(_begin, found);
-                if (val.first != _end->_parent->_data.first
-                    && !_comp(val.first, _end->_parent->_data.first))
-                    return ft::pair<pointer, bool>(_end->_parent, found);
-                tmp = _head;
-                while(tmp)
-                {
-                    if (val.first == tmp->_data.first)
-                    {
-                        found = true;
-                        break;
-                    }
-                    if (_comp(val.first, tmp->_data.first))
-                    {
-                        if (tmp->_left)
-                            tmp = tmp->_left;
-                        else
-                            break;
-                    }
-                    else
-                    {
-                        if (tmp->_right && tmp->_right != _end)
-                            tmp = tmp->_right;
-                        else
-                            break;
-                    }
-                }
-                return ft::pair<pointer, bool>(tmp, found);
-            }
-
-            pointer lower_bound(const value_type& val)
-            {
-                pointer tmp = _head;
 
                 if (_size)
                 {
-                    if (!_comp(_begin->_data.first, val.first))
-                        return _begin;
-                    if (_comp(_end->_parent->_data.first, val.first))
-                        return (_end);
-                    while(tmp && tmp != _end)
-                    {
-                        if (!_comp(tmp->_data.first, val.first))
-                        {
-                            while(tmp && !_comp(tmp->_data.first, val.first))
-                                tmp = tmp->_left;
-                            if (tmp->_data.first == val.first || !tmp->_right)
-                                return tmp;
-                        }
-                        tmp = tmp->_right;
-                    }
-                    return (tmp);
+                    pointer newNode = insertToLeaf(val);
+                    if (newNode)
+                        fixViolation(newNode);
                 }
                 else
-                    return (_end);
+                    insertToHead(val);
             }
+            bool find(const value_type& val) { return findHelper(_head, val).isExist;};
+    private:
+        void fixViolation(pointer &node)
+        {
+            pointer parent;
+            pointer grandParent;
 
-            pointer upper_bound(const value_type& val)
+            if (node == _head || node->isBlack || node->_parent->isBlack)
             {
-                pointer tmp = _head;
-
-                if (_size)
-                {
-                    if (!_comp(_begin->_data.first, val.first))
-                        return (_begin);
-                    if (_comp(_end->_data.first, val.first))
-                        return (_end);
-                    while(tmp && tmp != _end)
-                    {
-                        if (!_comp(tmp->_data.first, val.first))
-                        {
-                            while((!_comp(tmp->_data.first, val.first)))
-                            {
-                                if (tmp->_data.first == val.first)
-                                    break;
-                                if (!tmp->_left)
-                                    break;
-                                tmp = tmp->_left;
-                            }
-                            std::cout << tmp->_data.first << std::end;
-                            return (tmp);
-                        }
-                        if (!tmp->_right)
-                            break;
-                        tmp = tmp->_right;
-                    }
-                    return tmp;
-                }
-                else
-                    return (_end);
+                _head->isBlack = true;
+                return;
             }
 
-        public:
+            parent = node->_parent;
+            grandParent = parent->_parent;
+            if (parent == grandParent->_left)
+                LeftChild(node, parent, grandParent);
+            else
+                RightChild(node, parent, grandParent);
+            fixViolation(node);
+        }
+
+        void LeftChild(pointer &node, pointer parent, pointer gParent)
+        {
+            pointer uncle = gParent->_right;
+
+            //color correction:
+            if (uncle && !uncle->isBlack)
+                colorCorr(node, parent, gParent, uncle);
+            else
+            {
+                //Left Right Rotation
+                if (node == parent->_right)
+                {
+                    rotateLeft(parent);
+                    node  = parent;
+                    parent  = node->_parent;
+                }
+                rotateRight(gParent);
+                std::swap(parent->isBlack, gParent->isBlack);
+                node = parent;
+            }
+
+        }
+
+        void RightChild(pointer &node, pointer parent, pointer gParent)
+        {
+            pointer uncle = gParent->_left;
+
+            if (uncle && !uncle->isBlack)
+                colorCorr(node, parent, gParent,uncle);
+            else
+            {
+                if (node == parent->_left)
+                {
+                    rotateRight(parent);
+                    node = parent;
+                    parent = node->_parent;
+                }
+                rotateLeft(gParent);
+                std::swap(parent->isBlack, gParent->isBlack);
+                node = parent;
+            }
+        }
+
+        void colorCorr(pointer &node, pointer parent, pointer gParent,pointer uncle)
+        {
+            gParent->isBlack = false;
+            parent->isBlack = true;
+            uncle->isBlack = true;
+            node = gParent;
+        }
+
+        void rotateRight(pointer node)
+        {
+            pointer left = node->_left;
+            
+            node->_left = left->_right;
+            if (node->_left)
+                node->_left->_parent = node;
+            left->_parent = node->_parent;
+            if (!left->_parent)
+                _head = left;
+            else if (node == node->_parent->_left)
+                node->_parent->_left = left;
+            else
+                node->_parent->_right = left;
+            left->_right = node;
+            node->_parent = left;
+        }
+
+        void rotateLeft(pointer node)
+        {
+            pointer right = node->_right;
+
+            node->_right = right->_left;
+            if (node->_right)
+                node->_right->_parent = node;
+            right->_parent = node->_parent;
+            if(!node->_parent)
+                _head = right;
+            else
+                if (node == node->_parent->_left)
+                    node->_parent->_left = right;
+            else
+                node->_parent->_right = right;
+            right->_left = node;
+            node->_parent = right;
+        }
+
+        pointer Uncle(pointer node)
+        {
+            pointer parent = node->_parent;
+            pointer grandParent = parent->_parent;
+            return ((parent->_left == node) ? grandParent->_right: grandParent->_left);
+        }
+
+        pointer insertToLeaf(const value_type& val)
+        {
+            vect3<pointer> result = findHelper(_head,val);
+            pointer newNode;
+            if (result.isExist)
+                return (NULL);
+            newNode = allocate_node(val);
+            newNode->_parent = result.value;
+            if (result.toLeft)
+            {
+                result.value->_left = newNode;
+                _begin = (result.value == _begin) ? newNode : _begin;
+            }
+            else
+            {
+                if (result.value->_right == _end)
+                {
+                    _end->_parent = newNode;
+                    newNode->_right = _end;
+                }
+                result.value->_right = newNode;
+            }
+            _size++;
+            return newNode;
+        }
+
+        void insertToHead(const value_type& val)
+        {
+            _head = allocate_node(val);
+            _head->isBlack = true;
+            _head->_right = _end;
+            _end->_parent = _head;
+            _begin = _head;
+            _size++;
+        }
+
+        vect3<pointer> findHelper(pointer tmp,const value_type& val)
+        {
+            if (!_size)
+                return vect3<pointer>(NULL, false,false);
+            if (_begin->_data != val && _comp( val, _begin->_data))
+                return vect3<pointer>(_begin, false, true);
+            if (_end->_parent->_data != val && !_comp(val, _end->_parent->_data))
+                return vect3<pointer>(_end->_parent, false, false);
+            if (tmp->_data == val)
+                return vect3<pointer>(tmp, true, false);
+            if (_comp(val, tmp->_data))
+            {
+                if (tmp->_left)
+                    return findHelper(tmp->_left, val);
+                else
+                    return vect3<pointer>(tmp, false, true);
+            }
+            else
+            {
+                if (tmp->_right && tmp->_right != _end)
+                    return findHelper(tmp->_right, val);
+                else
+                    return vect3<pointer>(tmp, false, false);
+            }
+        }
+
+        // void print2DUtil(pointer root, int space)
+        // {
+        //     // Base case
+        //     if (root == NULL)
+        //         return;
+        
+        //     // Increase distance between levels
+        //     space += COUNT;
+        
+        //     // Process right child first
+        //     print2DUtil(root->_right, space);
+        
+        //     // Print current node after space
+        //     // count
+        //     std::cout<<std::endl;
+        //     for (int i = COUNT; i < space; i++)
+        //         std::cout<<" ";
+        //     std::cout<<root->_data<<"\n";
+        
+        //     // Process left child
+        //     print2DUtil(root->_left, space);
+        // }
+ 
+        void traversTree(pointer node)
+        {
+            if (!node || node == _end)
+                return;
+            std::cout << node->_data << std::endl;
+            if (node->_right)
+                traversTree(node->_right);
+            else
+            {
+                if (node == node->_parent->_right)
+                    traversTree(node->_parent->_parent);
+                else
+                    traversTree(node->_parent);
+            }
+        }
+
+        pointer allocate_node(const value_type& val)
+        {
+            pointer newNode = _alloc.allocate(1);
+            _alloc.construct(newNode, Node<value_type>(val));
+            return newNode;
+        }
+        private:
             pointer _head;
             pointer _begin;
             pointer _end;

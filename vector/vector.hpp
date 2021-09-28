@@ -242,12 +242,13 @@ namespace ft
                         iterator pos = position;
 
                         if (typeid(typename ft::iterator_traits<InputIterator>::iterator_category) ==\
-                            typeid(typename ft::iterator_traits<InputIterator>::iterator_category) &&
+                            typeid(typename ft::iterator_traits<iterator>::iterator_category) &&
                             std::distance(first, last) >= 0)
                             {
                                 for (InputIterator it = first; it != last; it++)
                                         position = insert_helper(position, 1, *it);
                             }
+                            // 
                 }
 
                 iterator erase (iterator position)
@@ -365,6 +366,7 @@ namespace ft
                         }
                         return (iterator(_data + index));   
                 }
+                ~vector(){clear()};
         private:
             allocator_type _alloc;
             pointer _data;

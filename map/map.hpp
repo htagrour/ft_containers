@@ -60,10 +60,9 @@ namespace ft
 
             // Modifiers
 
-            ft::pair<iterator, bool> insert(const value_type& k)
+            void insert(const value_type& k)
             {
-                ft::pair<node_pointer, bool> res = _bst.insert(k);
-                return ft::pair<iterator, bool>(iterator(res.first), !res.second);
+                _bst.insert(k);
             }
 
             iterator insert(iterator position, const value_type& value)
@@ -83,14 +82,14 @@ namespace ft
             }
 
             //Operations
-            iterator find(const key_type &k)
-            {
-                ft::pair<node_pointer,bool> res = find_helper(k);
+            // iterator find(const key_type &k)
+            // {
+            //     ft::pair<node_pointer,bool> res = find_helper(k);
 
-                if (res.second)
-                    return iterator(res.first);
-                return (end());
-            }
+            //     if (res.second)
+            //         return iterator(res.first);
+            //     return (end());
+            // }
 
             const_iterator find(const key_type& k) const
             {
@@ -100,23 +99,11 @@ namespace ft
                 return (end());
             }
 
-            size_type count (const key_type& k)
-            { 
-                return (find_helper(k).second);
-            }
+            // size_type count (const key_type& k)
+            // { 
+            //     return (find_helper(k).second);
+            // }
             
-            iterator lower_bound (const key_type& k)
-            {
-                ft::pair<key_type, mapped_type> tmp(k, mapped_type());
-                return (iterator(_bst.lower_bound(tmp)));
-            }
-
-            const_iterator lower_bound (const key_type& k) const //check this if it work
-            {
-                ft::pair<key_type, mapped_type> tmp(k, mapped_type());
-                return (const_iterator(_bst.lower_bound(tmp)));
-            }
-
             // iterator upper_bound (const key_type& k)
             // {
             //     return (iterator(_bst))
@@ -127,12 +114,6 @@ namespace ft
             // }
             //Allocator
             allocator_type get_allocator() const { return _alloc;}
-        private:
-            ft::pair<node_pointer,bool> find_helper(const key_type& k)
-            {
-                ft::pair<key_type, mapped_type> _pair(k, mapped_type());
-                return (_bst.find(_pair));
-            }
         private:
             bst _bst;
             key_compare _comp;

@@ -88,4 +88,3 @@ namespace ft
             typename VectIterator<T>::difference_type n)
             {return(lsh.base() + n);}
 }
-#endif
