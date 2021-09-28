@@ -236,13 +236,13 @@ namespace ft
         {
             if (!_size)
                 return vect3<pointer>(NULL, false,false);
-            if (_begin->_data != val && _comp( val, _begin->_data))
+            if (_begin->_data != val && _comp( val.first, _begin->_data.first))
                 return vect3<pointer>(_begin, false, true);
-            if (_end->_parent->_data != val && !_comp(val, _end->_parent->_data))
+            if (_end->_parent->_data != val && !_comp(val.first, _end->_parent->_data.first))
                 return vect3<pointer>(_end->_parent, false, false);
             if (tmp->_data == val)
                 return vect3<pointer>(tmp, true, false);
-            if (_comp(val, tmp->_data))
+            if (_comp(val.first, tmp->_data.first))
             {
                 if (tmp->_left)
                     return findHelper(tmp->_left, val);

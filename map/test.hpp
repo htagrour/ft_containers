@@ -32,7 +32,6 @@ void The_test(std::string desc)
     for (int i = 0; i < 100; i++)
     {
         // int r = rand() % COUNT;
-        std::cout << i << std::endl;
         map.insert(ft::pair<int, int>(i, i));
     }
         // time_t start = get_time();
@@ -53,9 +52,9 @@ void The_test(std::string desc)
     //         {std::cout << "ERROR\n";break;}
     //     std::cout << it->first << std::endl;
     // }
-    // std::cout << "----RIterator------" << std::endl;
-    // for(typename T::reverse_iterator it = map.rbegin(); it != map.rend(); it++)
-    //     std::cout << it->first << std::endl;
+    std::cout << "----RIterator------" << std::endl;
+    for(typename T::reverse_iterator it = map.rbegin(); it != map.rend(); it++)
+        std::cout << it->first << std::endl;
     // cout << "-12 is not found" << std::endl;
     // if (map.find(66) != map.end())
     //     std::cout << "66 is found" << std::endl;
