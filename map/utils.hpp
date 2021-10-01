@@ -22,6 +22,7 @@ namespace ft
                 this->first = rhs.first;
                 this->second = rhs.second;
             }
+            return *this;
         }
     };
     /*

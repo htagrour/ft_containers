@@ -6,6 +6,7 @@
 
 #define MAX_RAM 4294960000
 #define BUFFER_SIZE 4096
+using namespace std::chrono;
 struct Buffer
 {
 	int idx;
@@ -19,9 +20,8 @@ time_t get_time(void)
     time_t msecs_time = (time_now.tv_sec * 1e3) + (time_now.tv_usec / 1e3);
     return(msecs_time);
 }
-using namespace std::chrono;
 #define COUNT (MAX_RAM / (int)sizeof(Buffer))
-template<typename T>
+template<typename T, typename P>
 void The_test(std::string desc)
 {
     // int  p[] = {78,49,71 ,-12,60,30,36,72,9,7};
@@ -29,11 +29,17 @@ void The_test(std::string desc)
     // std::ofstream os (desc + ".res");
     std::cout << "---------" << desc << "-----------" << std::endl;
     // std::cout << COUNT << std::endl;
-    for (int i = 0; i < 100; i++)
+    for (int i = 0; i < 10000; i++)
     {
         // int r = rand() % COUNT;
-        map.insert(ft::pair<int, int>(i, i));
+        std::cout << map.insert(P(i, i)).second << std::endl;
     }
+
+    std::cout << map.insert(P(0, 0)).second << std::endl;
+    // auto start = high_resolution_clock::now();
+    // auto stop = high_resolution_clock::now();
+    // auto duration = duration_cast<microseconds>(stop - start);
+    // std::cout << duration.count() << std::endl;
         // time_t start = get_time();
         // map.insert(ft::pair<int, int>(1e8 - 1, 30));
         // time_t end = get_time();
@@ -52,9 +58,9 @@ void The_test(std::string desc)
     //         {std::cout << "ERROR\n";break;}
     //     std::cout << it->first << std::endl;
     // }
-    std::cout << "----RIterator------" << std::endl;
-    for(typename T::reverse_iterator it = map.rbegin(); it != map.rend(); it++)
-        std::cout << it->first << std::endl;
+    // std::cout << "----RIterator------" << std::endl;
+    // for(typename T::reverse_iterator it = map.rbegin(); it != map.rend(); it++)
+    //     std::cout << it->first << std::endl;
     // cout << "-12 is not found" << std::endl;
     // if (map.find(66) != map.end())
     //     std::cout << "66 is found" << std::endl;

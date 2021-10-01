@@ -66,19 +66,21 @@ namespace ft
             size_type get_size() const { return _size;}
             size_type get_maxSize() const { return _alloc.max_size();}
 
-            void insert(const value_type& val)
+            pair<pointer, bool> insert(const value_type& val)
             {
-                pointer newNode;
+                pair<pointer, bool> res;
 
                 if (_size)
                 {
-                    pointer newNode = insertToLeaf(val);
-                    if (newNode)
-                        fixViolation(newNode);
+                    res = insertToLeaf(val);
+                    if (!res.second)
+                        fixViolation(res.first);
+                    return (res);
                 }
                 else
-                    insertToHead(val);
+                    return (pair<pointer, bool> (insertToHead(val), true));
             }
+
             bool find(const value_type& val) { return findHelper(_head, val).isExist;};
     private:
         void fixViolation(pointer &node)
@@ -196,12 +198,12 @@ namespace ft
             return ((parent->_left == node) ? grandParent->_right: grandParent->_left);
         }
 
-        pointer insertToLeaf(const value_type& val)
+        pair<pointer, bool> insertToLeaf(const value_type& val)
         {
             vect3<pointer> result = findHelper(_head,val);
             pointer newNode;
             if (result.isExist)
-                return (NULL);
+                return (pair<pointer, bool>(result.value, false));
             newNode = allocate_node(val);
             newNode->_parent = result.value;
             if (result.toLeft)
@@ -219,10 +221,10 @@ namespace ft
                 result.value->_right = newNode;
             }
             _size++;
-            return newNode;
+            return pair<pointer, bool>(result.value, true);
         }
 
-        void insertToHead(const value_type& val)
+        pointer insertToHead(const value_type& val)
         {
             _head = allocate_node(val);
             _head->isBlack = true;
@@ -230,6 +232,7 @@ namespace ft
             _end->_parent = _head;
             _begin = _head;
             _size++;
+            return _head;
         }
 
         vect3<pointer> findHelper(pointer tmp,const value_type& val)

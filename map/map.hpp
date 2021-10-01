@@ -60,9 +60,10 @@ namespace ft
 
             // Modifiers
 
-            void insert(const value_type& k)
+            ft::pair<iterator, bool> insert(const value_type& k)
             {
-                _bst.insert(k);
+                ft::pair<node_pointer, bool> res =  _bst.insert(k);
+                return(ft::pair<iterator, bool> (iterator(res.first) ,res.second));
             }
 
             iterator insert(iterator position, const value_type& value)
@@ -73,45 +74,15 @@ namespace ft
             template <class InputIterator>
             void insert (InputIterator first, InputIterator last)
             {
-                //check if these Iterators are valide
+                if (typeid(ft::itera))
                 while(first != last)
                 {
-                    insert(*first);            
-                    first++;
+                    insert(first->fi)
                 }
             }
-
             //Operations
-            // iterator find(const key_type &k)
-            // {
-            //     ft::pair<node_pointer,bool> res = find_helper(k);
 
-            //     if (res.second)
-            //         return iterator(res.first);
-            //     return (end());
-            // }
 
-            const_iterator find(const key_type& k) const
-            {
-                ft::pair<node_pointer,bool> res = find_helper(k);
-                if (res.second)
-                    return const_iterator(res.first);
-                return (end());
-            }
-
-            // size_type count (const key_type& k)
-            // { 
-            //     return (find_helper(k).second);
-            // }
-            
-            // iterator upper_bound (const key_type& k)
-            // {
-            //     return (iterator(_bst))
-            // }
-            // const_iterator upper_bound (const key_type& k) const //check this if it work
-            // {
-            //     return upper_bound(k);
-            // }
             //Allocator
             allocator_type get_allocator() const { return _alloc;}
         private:
