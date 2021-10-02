@@ -73,17 +73,21 @@ namespace ft
                 if (_size)
                 {
                     res = insertToLeaf(val);
-                    if (!res.second)
+                    if (res.second)
                         fixViolation(res.first);
                     return (res);
                 }
                 else
                     return (pair<pointer, bool> (insertToHead(val), true));
             }
-
-            bool find(const value_type& val) { return findHelper(_head, val).isExist;};
+                        
+            pointer find(const value_type& val) const
+            {
+                return (findHelper(_head, val).value);
+            };
     private:
-        void fixViolation(pointer &node)
+
+        void fixViolation(pointer node)
         {
             pointer parent;
             pointer grandParent;
@@ -204,6 +208,8 @@ namespace ft
             pointer newNode;
             if (result.isExist)
                 return (pair<pointer, bool>(result.value, false));
+            if (result.value == _end)
+                result.value = _end->_parent;
             newNode = allocate_node(val);
             newNode->_parent = result.value;
             if (result.toLeft)
@@ -221,7 +227,7 @@ namespace ft
                 result.value->_right = newNode;
             }
             _size++;
-            return pair<pointer, bool>(result.value, true);
+            return pair<pointer, bool>(newNode, true);
         }
 
         pointer insertToHead(const value_type& val)
@@ -235,14 +241,14 @@ namespace ft
             return _head;
         }
 
-        vect3<pointer> findHelper(pointer tmp,const value_type& val)
+        vect3<pointer> findHelper(pointer tmp,const value_type& val) const
         {
             if (!_size)
                 return vect3<pointer>(NULL, false,false);
             if (_begin->_data != val && _comp( val.first, _begin->_data.first))
                 return vect3<pointer>(_begin, false, true);
             if (_end->_parent->_data != val && !_comp(val.first, _end->_parent->_data.first))
-                return vect3<pointer>(_end->_parent, false, false);
+                return vect3<pointer>(_end, false, false);
             if (tmp->_data == val)
                 return vect3<pointer>(tmp, true, false);
             if (_comp(val.first, tmp->_data.first))

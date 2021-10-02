@@ -1,9 +1,9 @@
-#ifndef UTILS_HPP
-#define UTILS_HPP
+#ifndef GUTILS_HPP
+#define GUTILS_HPP
 
-#include <cstddef>
 namespace ft
 {
+    void echo(){};
     template<bool B, class T = void>
     struct enable_if {};
 
@@ -63,7 +63,7 @@ namespace ft
         static const bool value = true;
     };
 
-    template <class T>
+    template <typename T>
     struct iterator_traits {
         typedef typename T::value_type            value_type;
         typedef typename T::difference_type       difference_type;

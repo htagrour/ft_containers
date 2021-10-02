@@ -3,6 +3,7 @@
 #include <iostream>
 #include <sys/time.h>
 #include <chrono>
+#include <stdlib.h> 
 
 #define MAX_RAM 4294960000
 #define BUFFER_SIZE 4096
@@ -12,6 +13,8 @@ struct Buffer
 	int idx;
 	char buff[BUFFER_SIZE];
 };
+#define COUNT 10//(MAX_RAM / (int)sizeof(Buffer))
+
 time_t get_time(void)
 {
     struct timeval time_now;
@@ -20,66 +23,98 @@ time_t get_time(void)
     time_t msecs_time = (time_now.tv_sec * 1e3) + (time_now.tv_usec / 1e3);
     return(msecs_time);
 }
-#define COUNT (MAX_RAM / (int)sizeof(Buffer))
+template <typename T>
+void PrintConstIter(T map)
+{
+    for (typename T::const_iterator it = map.begin(); it != map.end() ; it++)
+        std::cout << "F: " << it->first << " S: " << it->second << std::endl;
+}
+
+template <typename T, typename P>
+void NormalInsert(T& map)
+{
+    for (int i = 0; i < COUNT; i++)
+    {
+        if (!map.insert(P(i, i)).second)
+        {
+            std::cout << "ERROR" << std::endl;
+            exit(1);
+        }
+    }
+    if (map.insert(P(rand() % COUNT,0)).second)
+    {
+        std::cout << "ERROR" << std::endl;
+        exit(1); 
+    }
+}
+
+
+template <typename T, typename P>
+void RangeInsert(T &map, P data)
+{
+    map.insert(data.begin(), data.end()); 
+}
+
+template <typename T>
+void printForward(T map)
+{
+    for (typename T::iterator it = map.begin(); it != map.end();it++)
+        std::cout << "F: " << (*it).first << " S: " << (*it).second << std::endl;
+}
+
+template <typename T>
+void printReverse(T map)
+{
+    for (typename T::reverse_iterator it = map.rbegin(); it != map.rend();it++)
+        std::cout << "F: " << (*it).first << " S: " << (*it).second << std::endl;
+}
+
+template <typename T>
+void AcessOpInsert(T &map)
+{
+    for (int i = 0; i < COUNT; i++)
+        map[i] = i;
+    map[-100] = -101;
+    map[COUNT / 2] = 101;
+}
+
+template <typename T>
+void CapacityTest(T map)
+{
+    std::cout << "SIZE: " << map.size() << std::endl;
+    std::cout << "COUNT: " << map.count() << std::endl;
+    std::cout << "MAX_SIZE: " <<  map.max_size() << std::endl;
+}
+
+template <typename T>
+void OperationsTest(T map)
+{
+    int element = rand() % COUNT;
+    if (map.find(element) == map.end())
+        std::cout << element << " NOT EXIST";
+    else
+        std::cout << element << " IS FOUND";
+    std::cout << std::endl;
+
+    std::cout << element<< " COUNT: " <<  map.count(element) << std::endl;
+}
+
 template<typename T, typename P>
 void The_test(std::string desc)
 {
-    // int  p[] = {78,49,71 ,-12,60,30,36,72,9,7};
     T map;
-    // std::ofstream os (desc + ".res");
-    std::cout << "---------" << desc << "-----------" << std::endl;
-    // std::cout << COUNT << std::endl;
-    for (int i = 0; i < 10000; i++)
-    {
-        // int r = rand() % COUNT;
-        std::cout << map.insert(P(i, i)).second << std::endl;
-    }
-
-    std::cout << map.insert(P(0, 0)).second << std::endl;
-    // auto start = high_resolution_clock::now();
-    // auto stop = high_resolution_clock::now();
-    // auto duration = duration_cast<microseconds>(stop - start);
-    // std::cout << duration.count() << std::endl;
-        // time_t start = get_time();
-        // map.insert(ft::pair<int, int>(1e8 - 1, 30));
-        // time_t end = get_time();
-        // std::cout << end - start << std::endl;
+    T map2;
 
 
-    // std::cout << "----Citerator-----" << std::endl;
-    // for(typename T::const_iterator it = map.begin(); it != map.end(); it++)
-    //     std::cout << (*it).first << std::endl;
-
-    // std::cout << "----Iterator------" << std::endl;
-    // unsigned int prev = map.begin()->first;
-    // for(typename T::iterator it = map.begin(); it != map.end(); it++)
-    // {
-    //     if (prev > it->first)
-    //         {std::cout << "ERROR\n";break;}
-    //     std::cout << it->first << std::endl;
-    // }
-    // std::cout << "----RIterator------" << std::endl;
-    // for(typename T::reverse_iterator it = map.rbegin(); it != map.rend(); it++)
-    //     std::cout << it->first << std::endl;
-    // cout << "-12 is not found" << std::endl;
-    // if (map.find(66) != map.end())
-    //     std::cout << "66 is found" << std::endl;
-    // else
-    //     std::cout << "66 is not found" << std::endl;
-    
-    // for (int i = 0; i <= 10; i++)
-    // {
-    //     int var = rand() % 100;
-    //     typename T::iterator it = map.lower_bound(var);
-    //     if (it == map.end())
-    //         std::cout << var <<" out of bound" << std::endl;
-    //     else
-    //         std::cout << var<< " ==>" <<it->first << std::endl;
-    // }
-    // os.close();
-    // auto stop = high_resolution_clock::now();
-    // auto duration = duration_cast<microseconds>(stop - start);
-    // std::cout << duration.count() << std::endl;
+    // NormalInsert<T, P>(map);
+    AcessOpInsert<T>(map);
+    // std::cout << map[9] << std::endl;
+    // printForward<T>(map);
+    RangeInsert<T, T>(map2, map);
+    // printForward<T>(map2);
+    // printReverse<T>(map2);
+    PrintConstIter<T>(map2);
+    OperationsTest<T>(map2);
 }
 
 #endif

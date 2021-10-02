@@ -3,7 +3,9 @@
 #include "bst.hpp"
 #include "iterator.hpp"
 #include <iostream>
+#include "../utils/Gutils.hpp"
 #include "../utils/reverse_iterator.hpp"
+
 #include "utils.hpp"
 namespace ft
 {
@@ -27,8 +29,8 @@ namespace ft
             typedef std::size_t size_type;
             typedef std::ptrdiff_t difference_type;
             typedef ft::Bst<value_type, key_compare, allocator_type> bst;
-            typedef ft::iterator<node> iterator;
-            typedef ft::iterator<const node> const_iterator;
+            typedef ft::iterator<value_type> iterator;
+            typedef ft::iterator<const value_type> const_iterator;
             typedef ft::reverseIterator<iterator> reverse_iterator;
             typedef ft::reverseIterator<const_iterator> const_reverse_iterator;
 
@@ -58,6 +60,13 @@ namespace ft
             size_type max_size() const { return _bst.get_maxSize();}
             bool empty() const { return !size();}
 
+            // Element access
+
+            mapped_type& operator[] (const key_type& k)
+            {
+                return ((*((this->insert(make_pair(k,mapped_type()))).first)).second);
+            }
+
             // Modifiers
 
             ft::pair<iterator, bool> insert(const value_type& k)
@@ -66,25 +75,41 @@ namespace ft
                 return(ft::pair<iterator, bool> (iterator(res.first) ,res.second));
             }
 
-            iterator insert(iterator position, const value_type& value)
+            iterator insert(iterator position, const value_type& val)
             {
-
+                (void)position;
+                return (iterator(insert(val).first));
             }
 
             template <class InputIterator>
             void insert (InputIterator first, InputIterator last)
             {
-                if (typeid(ft::itera))
                 while(first != last)
                 {
-                    insert(first->fi)
+                    insert(*first);
+                    first++;
                 }
             }
             //Operations
 
+            iterator find (const key_type& k)
+            {
+                return (iterator(findHelper(k)));
+            }
 
+            const_iterator find(const key_type & k) const
+            {
+                return (const_iterator(findHelper(k)));
+            }
+
+            size_type count (const key_type &k ) const { return (find(k) != end());}
             //Allocator
             allocator_type get_allocator() const { return _alloc;}
+        private:
+            node_pointer findHelper(const key_type& k ) const
+            {
+                return (_bst.find(make_pair(k, mapped_type())));
+            }
         private:
             bst _bst;
             key_compare _comp;
