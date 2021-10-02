@@ -112,8 +112,8 @@ void The_test(std::string desc)
     // printForward<T>(map);
     RangeInsert<T, T>(map2, map);
     // printForward<T>(map2);
-    // printReverse<T>(map2);
-    PrintConstIter<T>(map2);
+    printReverse<T>(map2);
+    // PrintConstIter<T>(map2);
     OperationsTest<T>(map2);
 }
 

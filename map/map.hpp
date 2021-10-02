@@ -29,8 +29,8 @@ namespace ft
             typedef std::size_t size_type;
             typedef std::ptrdiff_t difference_type;
             typedef ft::Bst<value_type, key_compare, allocator_type> bst;
-            typedef ft::iterator<value_type> iterator;
-            typedef ft::iterator<const value_type> const_iterator;
+            typedef ft::iterator<node> iterator;
+            typedef ft::iterator<const node> const_iterator;
             typedef ft::reverseIterator<iterator> reverse_iterator;
             typedef ft::reverseIterator<const_iterator> const_reverse_iterator;
 

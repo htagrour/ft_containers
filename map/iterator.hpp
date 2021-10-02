@@ -10,7 +10,7 @@ namespace ft
         public:
                 typedef std::bidirectional_iterator_tag iterator_category;
                 typedef std::ptrdiff_t difference_type;
-                typedef ft::Node<T> value_type;
+                typedef T value_type;
                 typedef value_type* npointer;
                 typedef typename value_type::value_type base_type;
                 typedef base_type* pointer;
@@ -96,8 +96,7 @@ namespace ft
                     }
                     return (*this);
                 }
-                const base_type operator*() const  { return _ptr->_data;}
-                reference operator*() { return _ptr->_data;}// const iterartor not fixed yet
+                reference operator*() { return _ptr->_data;} // const iterartor not fixed yet
                 pointer operator->(){ return &_ptr->_data;}
                 operator iterator<const T>() const { return (iterator<const T>(this->_ptr));}
                 bool operator==(const iterator &rsh) { return _ptr == rsh._ptr;}

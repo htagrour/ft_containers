@@ -54,15 +54,14 @@ namespace ft
                 _comp = Compare();
                 _size = 0;
                 _head = NULL;
-                _end = _alloc.allocate(1);
-                _alloc.construct(_end, node_value(value_type()));
+                _end = allocate_node(value_type());
                 _begin = _end;
             }
 
             pointer get_begin() const { return _begin;}
             pointer get_end() const { return _end;}
             pointer get_rbegin() const { return _end->_parent;}
-            pointer get_rend() const { return _rend;}
+            pointer get_rend() const { return NULL;}
             size_type get_size() const { return _size;}
             size_type get_maxSize() const { return _alloc.max_size();}
 
@@ -85,8 +84,24 @@ namespace ft
             {
                 return (findHelper(_head, val).value);
             };
-    private:
+            pointer lowerBound(const value_type& val)
+            {
+                return (lowerBoundHelper(_head, val));
+            }
 
+    private:
+        pointer lowerBoundHelper(pointer node, const value_type& val)
+        {
+            if (_begin->_data.first != val.first && _comp( val.first, _begin->_data.first))
+                return _begin;
+            if (_end->_parent->_data.first != val.first &&
+                !_comp(val.first, _end->_parent->_data.first))
+                return _end;
+            if (node->_data.first == val.first)
+                return node;
+            if (_comp(node->_data.first, val.first))
+            
+        }
         void fixViolation(pointer node)
         {
             pointer parent;
@@ -245,11 +260,11 @@ namespace ft
         {
             if (!_size)
                 return vect3<pointer>(NULL, false,false);
-            if (_begin->_data != val && _comp( val.first, _begin->_data.first))
+            if (_begin->_data.first != val.first && _comp( val.first, _begin->_data.first))
                 return vect3<pointer>(_begin, false, true);
             if (_end->_parent->_data != val && !_comp(val.first, _end->_parent->_data.first))
                 return vect3<pointer>(_end, false, false);
-            if (tmp->_data == val)
+            if (tmp->_data.first == val.first)
                 return vect3<pointer>(tmp, true, false);
             if (_comp(val.first, tmp->_data.first))
             {
@@ -316,7 +331,7 @@ namespace ft
             pointer _head;
             pointer _begin;
             pointer _end;
-            pointer _rend;
+            // pointer _rend;
             size_type _size;
             node_alloc _alloc;
             Compare _comp;
