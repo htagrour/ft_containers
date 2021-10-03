@@ -2,12 +2,14 @@
 #include <iostream>
 #include <vector>
 #include <memory>
+
+
 int main()
 {
 
 
     std::allocator<char> alloc;
-    std::vector<int> vect(10, 5, "hello word");
+    std::vector<int, std::allocator<char> > vect(10, 5);
 
 
 
