@@ -4,7 +4,7 @@
 #include <memory>
 #include "utils.hpp"
 #include <functional>
-
+#define SPACE 10
 namespace ft
 {
     template <typename v1>
@@ -82,26 +82,45 @@ namespace ft
                         
             pointer find(const value_type& val) const
             {
-                return (findHelper(_head, val).value);
+                vect3<pointer> res = findHelper(_head, val);
+
+                if (res.isExist)
+                    return res.value;
+                return (_end);
             };
-            pointer lowerBound(const value_type& val)
+
+            pointer Bound(const value_type& val) const
             {
-                return (lowerBoundHelper(_head, val));
+                return (BoundHelper(_head, _head,val));
             }
 
+            void print(){print2DUtil(_head, 0);}
+
+
     private:
-        pointer lowerBoundHelper(pointer node, const value_type& val)
+
+        pointer BoundHelper(pointer node, pointer prev,const value_type& val) const
         {
-            if (_begin->_data.first != val.first && _comp( val.first, _begin->_data.first))
+            if (_comp(val.first,_begin->_data.first))
                 return _begin;
-            if (_end->_parent->_data.first != val.first &&
-                !_comp(val.first, _end->_parent->_data.first))
+            if (_comp( _end->_parent->_data.first,val.first))
                 return _end;
             if (node->_data.first == val.first)
                 return node;
-            if (_comp(node->_data.first, val.first))
-            
+            if (_comp(val.first,node->_data.first))
+            {
+                prev = node;
+                if (node->_left)
+                    return BoundHelper(node->_left, prev, val);
+            }
+            else
+            {
+                if (node->_right && node->_right != _end)
+                    return (BoundHelper(node->_right, prev, val));
+            }
+            return prev;
         }
+
         void fixViolation(pointer node)
         {
             pointer parent;
@@ -281,29 +300,28 @@ namespace ft
                     return vect3<pointer>(tmp, false, false);
             }
         }
-
-        // void print2DUtil(pointer root, int space)
-        // {
-        //     // Base case
-        //     if (root == NULL)
-        //         return;
+        void print2DUtil(pointer root, int space)
+        {
+            // Base case
+            if (root == NULL)
+                return;
         
-        //     // Increase distance between levels
-        //     space += COUNT;
+            // Increase distance between levels
+            space += SPACE;
         
-        //     // Process right child first
-        //     print2DUtil(root->_right, space);
+            // Process right child first
+            print2DUtil(root->_right, space);
         
-        //     // Print current node after space
-        //     // count
-        //     std::cout<<std::endl;
-        //     for (int i = COUNT; i < space; i++)
-        //         std::cout<<" ";
-        //     std::cout<<root->_data<<"\n";
+            // Print current node after space
+            // count
+            std::cout<<std::endl;
+            for (int i = SPACE; i < space; i++)
+                std::cout<<" ";
+            std::cout<<root->_data.first<<"\n";
         
-        //     // Process left child
-        //     print2DUtil(root->_left, space);
-        // }
+            // Process left child
+            print2DUtil(root->_left, space);
+        }
  
         void traversTree(pointer node)
         {

@@ -1,7 +1,7 @@
 #ifndef VECTOR_HPP
 #define VECTOR_HPP
 #include "VectorUtils.hpp"
-#include "../utils/utils.hpp"
+#include "../utils/Gutils.hpp"
 #include <iostream>
 #include <exception>
 #include <typeinfo>
@@ -289,6 +289,7 @@ namespace ft
                /*
                         relational operators
                */
+                ~vector(){clear();};
         private:
                 void zero()
                 {
@@ -366,7 +367,6 @@ namespace ft
                         }
                         return (iterator(_data + index));   
                 }
-                ~vector(){clear()};
         private:
             allocator_type _alloc;
             pointer _data;

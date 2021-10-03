@@ -5,5 +5,5 @@
 int main()
 {
     // The_test<ft::map<int,int> >("FT");
-    The_test<std::map<int,int> , std::pair<int,int> >("STD");
+    The_test<std::map<int,int> , std::pair<int,std::string> >("STD");
 }

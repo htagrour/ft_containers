@@ -103,8 +103,48 @@ namespace ft
             }
 
             size_type count (const key_type &k ) const { return (find(k) != end());}
+
+            iterator lower_bound (const key_type& k)
+            { return (iterator(_bst.Bound(make_pair(k, mapped_type()))));}
+
+            const_iterator lower_bound (const key_type& k) const
+            { return (const_iterator(_bst.Bound(make_pair(k, mapped_type()))));}
+
+            iterator upper_bound (const key_type& k)
+            {
+                iterator res = _bst.Bound(make_pair(k, mapped_type()));
+
+                if(res->first == k)
+                    res++;
+                return (res);
+            }
+
+            const_iterator upper_bound (const key_type& k) const
+            {
+                const_iterator res = _bst.Bound(make_pair(k, mapped_type()));
+
+                if(res->first == k)
+                    res++;
+                return (res);
+            }
+
+            pair<const_iterator,const_iterator> equal_range (const key_type& k) const
+            {
+                const_iterator res = _bst.Bound(make_pair(k, mapped_type()));
+                return make_pair(res, ++res);
+            }
+
+            pair<iterator,iterator>             equal_range (const key_type& k)
+            {
+                iterator res = _bst.Bound(make_pair(k, mapped_type()));
+                return make_pair(res, (res->first != k) ? res : ++res);
+            }
             //Allocator
             allocator_type get_allocator() const { return _alloc;}
+
+
+            //for testing
+            void print() {_bst.print();}
         private:
             node_pointer findHelper(const key_type& k ) const
             {
