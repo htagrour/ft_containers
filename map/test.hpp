@@ -13,7 +13,7 @@ struct Buffer
 	int idx;
 	char buff[BUFFER_SIZE];
 };
-#define COUNT 1e8//(MAX_RAM / (int)sizeof(Buffer))
+#define COUNT 1e1//(MAX_RAM / (int)sizeof(Buffer))
 
 time_t get_time(void)
 {
@@ -24,7 +24,7 @@ time_t get_time(void)
     return(msecs_time);
 }
 template <typename T>
-void PrintConstIter(T map)
+void PrintConstIter(const T &map)
 {
     for (typename T::const_iterator it = map.begin(); it != map.end() ; it++)
         std::cout << "F: " << it->first << " S: " << it->second << std::endl;
@@ -56,14 +56,14 @@ void RangeInsert(T &map, P data)
 }
 
 template <typename T>
-void printForward(T map)
+void printForward(const T map)
 {
-    for (typename T::iterator it = map.begin(); it != map.end();it++)
+    for (typename T::const_iterator it = map.begin(); it != map.end();it++)
         std::cout << "F: " << (*it).first << " S: " << (*it).second << std::endl;
 }
 
 template <typename T>
-void printReverse(T map)
+void printReverse(const T map)
 {
     for (typename T::reverse_iterator it = map.rbegin(); it != map.rend();it++)
         std::cout << "F: " << (*it).first << " S: " << (*it).second << std::endl;
@@ -119,20 +119,20 @@ template<typename T, typename P>
 void The_test(std::string desc)
 {
     T map;
-    T map2;
+    // T map2;
 
     srand(time(NULL));
     // NormalInsert<T, P>(map);
     AcessOpInsert<T>(map);
     // std::cout << map[9] << std::endl;
-    // printForward<T>(map);
-    RangeInsert<T, T>(map2, map);
-    printForward<T>(map2);
+    printForward<T>(map);
+    // RangeInsert<T, T>(map2, map);
+    // printForward<T>(map2);
     // map2.print();
     // printReverse<T>(map2);
     // PrintConstIter<T>(map2);
-    OperationsTest<T>(map2);
-    CapacityTest(map2);
+    // OperationsTest<T>(map2);
+    // CapacityTest(map2);
 }
 
 #endif

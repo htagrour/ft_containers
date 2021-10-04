@@ -1,10 +1,8 @@
 #ifndef MAP_HPP
 #define MAP_HPP
 #include "bst.hpp"
-#include "iterator.hpp"
 #include <iostream>
 #include "../utils/Gutils.hpp"
-#include "../utils/reverse_iterator.hpp"
 
 #include "utils.hpp"
 namespace ft
@@ -29,10 +27,10 @@ namespace ft
             typedef std::size_t size_type;
             typedef std::ptrdiff_t difference_type;
             typedef ft::Bst<value_type, key_compare, allocator_type> bst;
-            typedef ft::iterator<node> iterator;
-            typedef ft::iterator<const node> const_iterator;
-            typedef ft::reverseIterator<iterator> reverse_iterator;
-            typedef ft::reverseIterator<const_iterator> const_reverse_iterator;
+            typedef typename bst::iterator iterator;
+            typedef typename bst::const_iterator const_iterator; 
+            typedef typename bst::reverse_iterator reverse_iterator; 
+
 
             explicit map (const key_compare& comp = key_compare(),
               const allocator_type& alloc = allocator_type())
@@ -41,19 +39,19 @@ namespace ft
                   _alloc = alloc;
                   _comp = comp;
               }
-            
+            ~map(){};
             // Iterartors
-            iterator begin() { return iterator(_bst.get_begin());}
-            const_iterator begin() const {return const_iterator(_bst.get_begin());}
+            iterator begin() { return _bst.get_begin();}
+            const_iterator begin() const {return _bst.get_begin();}
 
-            iterator end() { return iterator(_bst.get_end());}
-            const_iterator end() const {return const_iterator(_bst.get_end());}
+            iterator end() { return (_bst.get_end());}
+            const_iterator end() const {return (_bst.get_end());}
 
-            reverse_iterator rbegin() { return reverse_iterator(_bst.get_rbegin());}
-            const_reverse_iterator rbegin() const {return const_reverse_iterator(_bst.get_rbegin());}
+            // reverse_iterator rbegin() { return reverse_iterator(_bst.get_rbegin());}
+            // const_reverse_iterator rbegin() const {return const_reverse_iterator(_bst.get_rbegin());}
 
-            reverse_iterator rend() { return reverse_iterator(_bst.get_rend());}
-            const_reverse_iterator rend() const {return const_iterator(_bst.get_rend());}
+            // reverse_iterator rend() { return reverse_iterator(_bst.get_rend());}
+            // const_reverse_iterator rend() const {return const_iterator(_bst.get_rend());}
 
             // Capacity
             size_type size() const { return _bst.get_size();}
@@ -105,7 +103,7 @@ namespace ft
             size_type count (const key_type &k ) const { return (find(k) != end());}
 
             iterator lower_bound (const key_type& k)
-            { return (iterator(_bst.Bound(make_pair(k, mapped_type()))));}
+            { return (iterator(_bst.Bound(ft::make_pair(k, mapped_type()))));}
 
             const_iterator lower_bound (const key_type& k) const
             { return (const_iterator(_bst.Bound(make_pair(k, mapped_type()))));}

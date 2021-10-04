@@ -1,25 +1,27 @@
 #ifndef ITERATOR_HPP
 #define ITERATOR_HPP
-
+#include "utils.hpp"
 #include <iostream>
 namespace ft
 {
-    template<typename T>
+    template<typename T, typename Node>
     class iterator
     {
         public:
                 typedef std::bidirectional_iterator_tag iterator_category;
                 typedef std::ptrdiff_t difference_type;
-                typedef T value_type;
-                typedef value_type* npointer;
-                typedef typename value_type::value_type base_type;
-                typedef base_type* pointer;
-                typedef base_type& reference;
+                // typedef T value_type;
+                // typedef ft::Node<T> value_type;
+                // typedef value_type* npointer;
+                // typedef typename value_type::value_type base_type;
+                typedef T* pointer;
+                typedef T& reference;
 
 
 
                 iterator():_ptr(NULL){}
-                iterator(npointer ptr):_ptr(ptr){}
+                iterator(Node* ptr):_ptr(ptr){}
+
                 iterator(const iterator &rsh) { *this = rsh;}
                 iterator& operator=(const iterator &rsh)
                 {
@@ -40,7 +42,7 @@ namespace ft
 
                 iterator& operator++()
                 {
-                    npointer tmp;
+                    Node* tmp;
 
                     if (_ptr)
                     {
@@ -73,7 +75,7 @@ namespace ft
                 }
                 iterator& operator--()
                 {
-                    npointer tmp;
+                    Node* tmp;
 
                     if (_ptr)
                     {
@@ -98,13 +100,15 @@ namespace ft
                 }
                 reference operator*() { return _ptr->_data;} // const iterartor not fixed yet
                 pointer operator->(){ return &_ptr->_data;}
-                operator iterator<const T>() const { return (iterator<const T>(this->_ptr));}
+                operator iterator<const T,  Node>() const { 
+                    return (iterator<const T, Node>(this->_ptr));
+                }
                 bool operator==(const iterator &rsh) { return _ptr == rsh._ptr;}
                 bool operator!=(const iterator &rsh) { return _ptr != rsh._ptr;}
 
 
         protected:
-            npointer _ptr;
+            Node* _ptr;
     };
 }
 #endif

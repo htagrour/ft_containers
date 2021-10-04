@@ -4,38 +4,11 @@
 #include <memory>
 #include "utils.hpp"
 #include <functional>
+#include "../utils/reverse_iterator.hpp"
+#include "iterator.hpp"
 #define SPACE 10
 namespace ft
 {
-    template <typename v1>
-    struct vect3
-    {
-        vect3(v1 value, bool isExist, bool toLeft):\
-        value(value),isExist(isExist),toLeft(toLeft){};
-
-        v1 value;
-        bool isExist;
-        bool toLeft;
-    };
-
-    template <typename T>
-    struct Node
-    {
-        typedef T value_type;
-        typedef Node<value_type>* pointer;
-
-        Node(){}
-        Node(T data):_data(data), _left(NULL), _right(NULL),_parent(NULL){}
-        Node(T data, pointer left, pointer right, pointer parent): 
-            _data(data), _left(left),_right(right), _parent(parent){};
-        bool operator==(const Node &rsh) { return _data == rsh._data;}
-        bool operator!=(const Node &rsh) { return _data != rsh._data;}
-        value_type _data;
-        pointer _left;
-        pointer _right;
-        pointer _parent;
-        bool isBlack;
-    };
 
     template<class T, class Compare , class Alloc >
     class Bst
@@ -47,21 +20,29 @@ namespace ft
             typedef size_t size_type;
             typedef Alloc allocator_type;
             typedef typename allocator_type::template rebind<node_value>::other node_alloc;
+            typedef ft::iterator<value_type, node_value> iterator;
+            typedef ft::iterator<const value_type, node_value > const_iterator;
+            typedef ft::reverseIterator<iterator> reverse_iterator;
+            typedef ft::reverseIterator<const_iterator> const_reverse_iterator;
             
             Bst()
             {
                 _alloc = node_alloc();
                 _comp = Compare();
-                _size = 0;
-                _head = NULL;
-                _end = allocate_node(value_type());
-                _begin = _end;
+                refresh();
             }
+            ~Bst()
+            {
+                clear();
+                // deallocate_node(_end);
+            }
+            iterator get_begin() { return iterator(_begin);}
+            const_iterator get_begin() const { return iterator(_begin);}
+            iterator get_end()  { return iterator(_end);}
+            const_iterator get_end() const { return iterator(_end);}
 
-            pointer get_begin() const { return _begin;}
-            pointer get_end() const { return _end;}
-            pointer get_rbegin() const { return _end->_parent;}
-            pointer get_rend() const { return NULL;}
+            // reverse_iterator get_rbegin() const { return _end->_parent;}
+            // reverse_iterator get_rend() const { return NULL;}
             size_type get_size() const { return _size;}
             size_type get_maxSize() const { return _alloc.max_size();}
 
@@ -94,10 +75,28 @@ namespace ft
                 return (BoundHelper(_head, _head,val));
             }
 
+            void clear()
+            {
+                clearHelper(_head);
+                _size = 0;
+            }
+
             void print(){print2DUtil(_head, 0);}
 
 
     private:
+
+        void clearHelper(pointer node)
+        {
+            if (node && node != _end)
+            {
+                clearHelper(node->_left);
+                clearHelper(node->_right);
+
+                deallocate_node(node);
+                node = NULL; 
+            }
+        }
 
         pointer BoundHelper(pointer node, pointer prev,const value_type& val) const
         {
@@ -345,11 +344,23 @@ namespace ft
             _alloc.construct(newNode, Node<value_type>(val));
             return newNode;
         }
+
+        void deallocate_node(pointer node)
+        {
+            _alloc.destroy(node);
+            _alloc.deallocate(node, 1);
+        }
+        void refresh()
+        {
+            _head = NULL;
+            _end = allocate_node(value_type());
+            _begin = _end;
+            _size = 0;
+        }
         private:
             pointer _head;
             pointer _begin;
             pointer _end;
-            // pointer _rend;
             size_type _size;
             node_alloc _alloc;
             Compare _comp;

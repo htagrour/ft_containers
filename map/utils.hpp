@@ -3,6 +3,36 @@
 
 namespace ft
 {
+    template <typename v1>
+    struct vect3
+    {
+        vect3(v1 value, bool isExist, bool toLeft):\
+        value(value),isExist(isExist),toLeft(toLeft){};
+
+        v1 value;
+        bool isExist;
+        bool toLeft;
+    };
+
+    template <typename T>
+    struct Node
+    {
+        typedef T value_type;
+        typedef Node<value_type>* pointer;
+
+        Node(){}
+        Node(T data):_data(data), _left(NULL), _right(NULL),_parent(NULL){}
+        Node(T data, pointer left, pointer right, pointer parent, bool isBlack): 
+            _data(data), _left(left),_right(right), _parent(parent), isBlack(isBlack){};
+        bool operator==(const Node &rsh) { return _data == rsh._data;}
+        bool operator!=(const Node &rsh) { return _data != rsh._data;}
+        value_type _data;
+        pointer _left;
+        pointer _right;
+        pointer _parent;
+        bool isBlack;
+    };
+    
     template <typename T1, typename T2>
     struct pair
     {
