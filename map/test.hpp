@@ -56,7 +56,7 @@ void RangeInsert(T &map, P data)
 }
 
 template <typename T>
-void printForward(const T map)
+void printForward(T map)
 {
     for (typename T::const_iterator it = map.begin(); it != map.end();it++)
         std::cout << "F: " << (*it).first << " S: " << (*it).second << std::endl;
@@ -119,20 +119,22 @@ template<typename T, typename P>
 void The_test(std::string desc)
 {
     T map;
-    // T map2;
 
     srand(time(NULL));
-    // NormalInsert<T, P>(map);
+    NormalInsert<T, P>(map);
+    map.clear();
     AcessOpInsert<T>(map);
-    // std::cout << map[9] << std::endl;
+    std::cout << map[9] << std::endl;
     printForward<T>(map);
-    // RangeInsert<T, T>(map2, map);
-    // printForward<T>(map2);
-    // map2.print();
-    // printReverse<T>(map2);
-    // PrintConstIter<T>(map2);
-    // OperationsTest<T>(map2);
-    // CapacityTest(map2);
+    T map2(map.begin(), map.end());
+    map.swap(map2);
+    RangeInsert<T, T>(map2, map);
+    printForward<T>(map2);
+    map2.print();
+    printReverse<T>(map2);
+    PrintConstIter<T>(map);
+    OperationsTest<T>(map);
+    CapacityTest(map);
 }
 
 #endif

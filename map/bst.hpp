@@ -33,16 +33,18 @@ namespace ft
             }
             ~Bst()
             {
-                clear();
-                // deallocate_node(_end);
+                deleteTree();;
             }
             iterator get_begin() { return iterator(_begin);}
             const_iterator get_begin() const { return iterator(_begin);}
             iterator get_end()  { return iterator(_end);}
             const_iterator get_end() const { return iterator(_end);}
 
-            // reverse_iterator get_rbegin() const { return _end->_parent;}
-            // reverse_iterator get_rend() const { return NULL;}
+            reverse_iterator get_rbegin()  { return iterator(_end->_parent);}
+            reverse_iterator get_rend()  { return iterator(NULL);}
+
+            const_reverse_iterator get_rbegin() const { return const_iterator(_end->_parent);}
+            const_reverse_iterator get_rend() const { return const_iterator(NULL);}
             size_type get_size() const { return _size;}
             size_type get_maxSize() const { return _alloc.max_size();}
 
@@ -75,31 +77,45 @@ namespace ft
                 return (BoundHelper(_head, _head,val));
             }
 
+            void swap(Bst& x)
+            {
+                std::swap(_head, x._head);
+                std::swap(_size, x._size);
+                std::swap(_end, x._end);
+                std::swap(_begin, x._begin);
+            }
+
             void clear()
             {
-                clearHelper(_head);
-                _size = 0;
+                deleteTree();
+                refresh();
             }
 
             void print(){print2DUtil(_head, 0);}
 
-
     private:
 
-        void clearHelper(pointer node)
+        void deleteTree()
         {
-            if (node && node != _end)
-            {
-                clearHelper(node->_left);
-                clearHelper(node->_right);
+            deleteNodes(_head);
+            deallocate_node(_end);
+        }
 
+        void deleteNodes(pointer node)
+        {
+            if(node!= NULL && node != _end)
+            {
+                deleteNodes(node->_left);
+                deleteNodes(node->_right);
                 deallocate_node(node);
-                node = NULL; 
+                node=NULL;
             }
         }
 
         pointer BoundHelper(pointer node, pointer prev,const value_type& val) const
         {
+            if (!_size)
+                return (_end);
             if (_comp(val.first,_begin->_data.first))
                 return _begin;
             if (_comp( _end->_parent->_data.first,val.first))

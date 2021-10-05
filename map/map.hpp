@@ -30,16 +30,39 @@ namespace ft
             typedef typename bst::iterator iterator;
             typedef typename bst::const_iterator const_iterator; 
             typedef typename bst::reverse_iterator reverse_iterator; 
+            typedef typename bst::const_reverse_iterator const_reverse_iterator; 
 
 
+            // Member functions
             explicit map (const key_compare& comp = key_compare(),
-              const allocator_type& alloc = allocator_type())
-              {
-                  _bst = bst();
-                  _alloc = alloc;
-                  _comp = comp;
-              }
-            ~map(){};
+                        const allocator_type& alloc = allocator_type())
+            {
+                _alloc = alloc;
+                _comp = comp;
+            }
+            template <class InputIterator>
+            map (InputIterator first, InputIterator last,
+                    const key_compare& comp = key_compare(),
+                    const allocator_type& alloc = allocator_type())
+            {
+                _alloc = alloc;
+                _comp = comp;
+                insert(first, last);
+
+            }
+            map (const map& rsh){ *this = rsh;};
+
+            map& operator=(const map& rsh)
+            {
+                if (this != &rsh)
+                {
+                    _bst.clear();
+                    insert(rsh.begin(), rsh.end());
+                }
+                return *this;
+            }
+            ~map(){ };
+
             // Iterartors
             iterator begin() { return _bst.get_begin();}
             const_iterator begin() const {return _bst.get_begin();}
@@ -47,11 +70,11 @@ namespace ft
             iterator end() { return (_bst.get_end());}
             const_iterator end() const {return (_bst.get_end());}
 
-            // reverse_iterator rbegin() { return reverse_iterator(_bst.get_rbegin());}
-            // const_reverse_iterator rbegin() const {return const_reverse_iterator(_bst.get_rbegin());}
+            reverse_iterator rbegin() { return (_bst.get_rbegin());}
+            const_reverse_iterator rbegin() const {return (_bst.get_rbegin());}
 
-            // reverse_iterator rend() { return reverse_iterator(_bst.get_rend());}
-            // const_reverse_iterator rend() const {return const_iterator(_bst.get_rend());}
+            reverse_iterator rend() { return (_bst.get_rend());}
+            const_reverse_iterator rend() const {return (_bst.get_rend());}
 
             // Capacity
             size_type size() const { return _bst.get_size();}
@@ -88,6 +111,13 @@ namespace ft
                     first++;
                 }
             }
+
+            void swap(map& x)
+            {
+                _bst.swap(x._bst);
+            }
+
+            void clear() { _bst.clear();}
             //Operations
 
             iterator find (const key_type& k)
