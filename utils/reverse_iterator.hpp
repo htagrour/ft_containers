@@ -15,7 +15,7 @@ namespace ft
             reverseIterator():Iterator(NULL){};
             reverseIterator(Iterator ptr): Iterator(ptr){};
             template <typename Iter>
-            reverseIterator(const reverseIterator<Iter> &rsh) { this->ptr = rsh.base();}
+            reverseIterator(const reverseIterator<Iter> &rsh) { this->_ptr = rsh._ptr;}
             reverseIterator& operator++() {Iterator::operator--(); return (*this);}  
             reverseIterator operator++(int) { return(Iterator::operator--(0)); }
             reverseIterator& operator--() { Iterator::operator++(); return (*this);}  

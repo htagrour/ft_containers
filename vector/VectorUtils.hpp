@@ -13,29 +13,29 @@ namespace ft
             typedef value_type* pointer;
             typedef value_type& reference;
             
-            VectIterator():ptr(NULL){};
-            VectIterator(pointer ptr): ptr(ptr){}
+            VectIterator():_ptr(NULL){};
+            VectIterator(pointer _ptr): _ptr(_ptr){}
             VectIterator(const VectIterator &rsh){*this = rsh;}
             VectIterator &operator=(const VectIterator<T> &rsh)
             {
                 if (this != &rsh)
-                    this->ptr = rsh.ptr;
+                    this->_ptr = rsh._ptr;
                 return (*this);
             }
-            reference operator*() const { return *ptr; }
-            pointer operator->() { return ptr; }
-            reference operator[](difference_type rhs) const {return ptr[rhs];}
-            VectIterator& operator++() { ptr++; return *this; }  
+            reference operator*() const { return *_ptr; }
+            pointer operator->() { return _ptr; }
+            reference operator[](difference_type rhs) const {return _ptr[rhs];}
+            VectIterator& operator++() { _ptr++; return *this; }  
             VectIterator operator++(int) { VectIterator tmp = *this; ++(*this); return tmp; }
-            VectIterator& operator--() { ptr--; return *this; }  
+            VectIterator& operator--() { _ptr--; return *this; }  
             VectIterator operator--(int) { VectIterator tmp = *this; --(*this); return tmp; }
-            difference_type operator-(const VectIterator& rhs) {return ptr - rhs.ptr;}
-            VectIterator operator-(difference_type n) {return ptr - n;}
-            operator VectIterator<const T>() const {return (VectIterator<const T>(this->ptr));}
-            pointer base() const {  return (ptr);};
+            difference_type operator-(const VectIterator& rhs) {return _ptr - rhs._ptr;}
+            VectIterator operator-(difference_type n) {return _ptr - n;}
+            operator VectIterator<const T>() const {return (VectIterator<const T>(this->_ptr));}
+            pointer base() const {  return (_ptr);};
 
         protected:
-            pointer ptr;
+            pointer _ptr;
     };
     
     /*
