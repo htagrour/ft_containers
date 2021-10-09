@@ -15,36 +15,40 @@ namespace ft
     {
         public:
             typedef T value_type;
-            typedef Node<value_type> node_value;
+            typedef Node<value_type*> node_value;
+            typedef Alloc val_alloc;
             typedef node_value* pointer;
             typedef size_t size_type;
             typedef Alloc allocator_type;
             typedef typename allocator_type::template rebind<node_value>::other node_alloc;
             typedef ft::iterator<value_type, node_value> iterator;
             typedef ft::iterator<const value_type, node_value > const_iterator;
-            typedef ft::reverseIterator<iterator> reverse_iterator;
-            typedef ft::reverseIterator<const_iterator> const_reverse_iterator;
+            // typedef ft::reverseIterator<iterator> reverse_iterator;
+            // typedef ft::reverseIterator<const_iterator> const_reverse_iterator;
             
             Bst()
             {
                 _alloc = node_alloc();
+                _allocV = val_alloc();
                 _comp = Compare();
                 refresh();
             }
+
             ~Bst()
             {
-                deleteTree();;
+                // deleteTree();;
             }
+
             iterator get_begin() { return iterator(_begin);}
             const_iterator get_begin() const { return iterator(_begin);}
             iterator get_end()  { return iterator(_end);}
             const_iterator get_end() const { return iterator(_end);}
 
-            reverse_iterator get_rbegin()  { return iterator(_end->_parent);}
-            reverse_iterator get_rend()  { return iterator(NULL);}
+            // reverse_iterator get_rbegin()  { return iterator(_end->_parent);}
+            // reverse_iterator get_rend()  { return iterator(NULL);}
 
-            const_reverse_iterator get_rbegin() const { return const_iterator(_end->_parent);}
-            const_reverse_iterator get_rend() const { return const_iterator(NULL);}
+            // const_reverse_iterator get_rbegin() const { return const_iterator(_end->_parent);}
+            // const_reverse_iterator get_rend() const { return const_iterator(NULL);}
             size_type get_size() const { return _size;}
             size_type get_maxSize() const { return _alloc.max_size();}
 
@@ -85,6 +89,81 @@ namespace ft
                 std::swap(_begin, x._begin);
             }
 
+            pointer successorNode(pointer node)
+            {
+                while(node && node->_left)
+                    node = node->_left;
+                return node;
+            }
+
+            size_type deleteNode(const value_type& k)
+            {
+                vect3<pointer> res = findHelper(_head, k);
+
+                if (!res.isExist)
+                    return 0;
+                deleteNode(res.value);
+                return 1;
+            }
+
+            void deleteNode(pointer node)
+            {
+                if (!_size)
+                    return;
+                if (!node->_left && (!node->_right || node->_right == _end)) // NO CHILDES
+                {
+                    if (node->_parent)
+                    {
+                        if (node->_parent->_left == node)
+                            node->_parent->_left = NULL;
+                        else
+                            node->_parent->_right = NULL;
+                    }
+                    deallocate_node(node);
+                }
+                else // AT LEAST 1 CHILD
+                {
+                    pointer tmp;
+                    if (!node->_left) // ONLY RIGHT CHILD
+                    {
+                        node->_right->_parent = node->_parent;
+                        if (node->_parent)
+                        {
+                            if (node->_parent->_left == node)
+                                node->_parent->_left = node->_right;
+                            else
+                                node->_parent->_right = node->_right;
+                        }
+                        deallocate_node(node);
+                    }
+                    else if (!node->_right || node->_right == _end) // ONLY LEFT CHILD
+                    {
+                        node->_left->_parent = node->_parent;
+                        if (node->_parent)
+                        {
+                            if (node->_parent->_left == node)
+                                node->_parent->_left = node->_left;
+                            else
+                                node->_parent->_right = node->_left; 
+                        }
+                        deallocate_node(node);
+                    }
+                    else // LEFT && RIGHT CHILD
+                    {
+                        tmp = successorNode(node->_right);
+                        if (tmp == node->_right) // SPEC CASE
+                             tmp->_parent->_right = tmp->_right;
+                        else
+                            tmp->_parent->_left = tmp->_right;
+                        if (tmp->_right)
+                            tmp->_right->_parent = tmp->_parent;
+                        std::swap(tmp->_data, node->_data);
+                        deallocate_node(tmp);
+                    }
+                }
+                _size--;
+            }
+
             void clear()
             {
                 deleteTree();
@@ -99,6 +178,7 @@ namespace ft
         {
             deleteNodes(_head);
             deallocate_node(_end);
+            _end = _begin = NULL;
         }
 
         void deleteNodes(pointer node)
@@ -108,7 +188,6 @@ namespace ft
                 deleteNodes(node->_left);
                 deleteNodes(node->_right);
                 deallocate_node(node);
-                node=NULL;
             }
         }
 
@@ -116,13 +195,13 @@ namespace ft
         {
             if (!_size)
                 return (_end);
-            if (_comp(val.first,_begin->_data.first))
+            if (_comp(val.first,_begin->_data->first))
                 return _begin;
-            if (_comp( _end->_parent->_data.first,val.first))
+            if (_comp( _end->_parent->_data->first,val.first))
                 return _end;
-            if (node->_data.first == val.first)
+            if (node->_data->first == val.first)
                 return node;
-            if (_comp(val.first,node->_data.first))
+            if (_comp(val.first,node->_data->first))
             {
                 prev = node;
                 if (node->_left)
@@ -294,13 +373,13 @@ namespace ft
         {
             if (!_size)
                 return vect3<pointer>(NULL, false,false);
-            if (_begin->_data.first != val.first && _comp( val.first, _begin->_data.first))
+            if (_begin->_data->first != val.first && _comp( val.first, _begin->_data->first))
                 return vect3<pointer>(_begin, false, true);
-            if (_end->_parent->_data != val && !_comp(val.first, _end->_parent->_data.first))
+            if (*_end->_parent->_data != val && !_comp(val.first, _end->_parent->_data->first))
                 return vect3<pointer>(_end, false, false);
-            if (tmp->_data.first == val.first)
+            if (tmp->_data->first == val.first)
                 return vect3<pointer>(tmp, true, false);
-            if (_comp(val.first, tmp->_data.first))
+            if (_comp(val.first, tmp->_data->first))
             {
                 if (tmp->_left)
                     return findHelper(tmp->_left, val);
@@ -332,40 +411,47 @@ namespace ft
             std::cout<<std::endl;
             for (int i = SPACE; i < space; i++)
                 std::cout<<" ";
-            std::cout<<root->_data.first<<"\n";
+            std::cout<<root->_data->first<<"\n";
         
             // Process left child
             print2DUtil(root->_left, space);
         }
  
-        void traversTree(pointer node)
-        {
-            if (!node || node == _end)
-                return;
-            std::cout << node->_data << std::endl;
-            if (node->_right)
-                traversTree(node->_right);
-            else
-            {
-                if (node == node->_parent->_right)
-                    traversTree(node->_parent->_parent);
-                else
-                    traversTree(node->_parent);
-            }
-        }
+        // void traversTree(pointer node)
+        // {
+        //     if (!node || node == _end)
+        //         return;
+        //     std::cout << node->_data << std::endl;
+        //     if (node->_right)
+        //         traversTree(node->_right);
+        //     else
+        //     {
+        //         if (node == node->_parent->_right)
+        //             traversTree(node->_parent->_parent);
+        //         else
+        //             traversTree(node->_parent);
+        //     }
+        // }
 
         pointer allocate_node(const value_type& val)
         {
+            value_type* newVal= _allocV.allocate(1);
+            _allocV.construct(newVal, val);
             pointer newNode = _alloc.allocate(1);
-            _alloc.construct(newNode, Node<value_type>(val));
+            _alloc.construct(newNode, node_value(newVal));
             return newNode;
         }
 
-        void deallocate_node(pointer node)
+        void deallocate_node(pointer &node)
         {
+            _allocV.destroy(node->_data);
+            _allocV.deallocate(node->_data, 1);
+            node->_data = NULL;
             _alloc.destroy(node);
             _alloc.deallocate(node, 1);
+            node = NULL;
         }
+
         void refresh()
         {
             _head = NULL;
@@ -379,6 +465,7 @@ namespace ft
             pointer _end;
             size_type _size;
             node_alloc _alloc;
+            val_alloc _allocV;
             Compare _comp;
     };
 }

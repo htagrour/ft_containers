@@ -15,7 +15,7 @@ namespace ft
             typedef Key key_type;
             typedef T mapped_type;
             typedef ft::pair<const key_type, mapped_type> value_type;
-            typedef ft::Node<value_type> node;
+            typedef ft::Node<value_type*> node;
             typedef typename node::pointer node_pointer;
             typedef Compare key_compare;
             // typedef ###### value_compare;
@@ -29,8 +29,8 @@ namespace ft
             typedef ft::Bst<value_type, key_compare, allocator_type> bst;
             typedef typename bst::iterator iterator;
             typedef typename bst::const_iterator const_iterator; 
-            typedef typename bst::reverse_iterator reverse_iterator; 
-            typedef typename bst::const_reverse_iterator const_reverse_iterator; 
+            // typedef typename bst::reverse_iterator reverse_iterator; 
+            // typedef typename bst::const_reverse_iterator const_reverse_iterator; 
 
 
             // Member functions
@@ -70,11 +70,11 @@ namespace ft
             iterator end() { return (_bst.get_end());}
             const_iterator end() const {return (_bst.get_end());}
 
-            reverse_iterator rbegin() { return (_bst.get_rbegin());}
-            const_reverse_iterator rbegin() const {return (_bst.get_rbegin());}
+            // reverse_iterator rbegin() { return (_bst.get_rbegin());}
+            // const_reverse_iterator rbegin() const {return (_bst.get_rbegin());}
 
-            reverse_iterator rend() { return (_bst.get_rend());}
-            const_reverse_iterator rend() const {return (_bst.get_rend());}
+            // reverse_iterator rend() { return (_bst.get_rend());}
+            // const_reverse_iterator rend() const {return (_bst.get_rend());}
 
             // Capacity
             size_type size() const { return _bst.get_size();}
@@ -117,6 +117,24 @@ namespace ft
                 _bst.swap(x._bst);
             }
 
+            size_type erase(const key_type &k)
+            {
+                return (_bst.deleteNode(make_pair(k, mapped_type())));
+            }
+            void erase(iterator position)
+            {
+                _bst.deleteNode(position.getBase());
+            }
+
+            void erase(iterator first, iterator last)
+            {
+                iterator tmp;
+                while(first != last)
+                {
+                    tmp = first++;
+                    erase(tmp);
+                }
+            }
             void clear() { _bst.clear();}
             //Operations
 

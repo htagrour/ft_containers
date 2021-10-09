@@ -13,7 +13,7 @@ struct Buffer
 	int idx;
 	char buff[BUFFER_SIZE];
 };
-#define COUNT 1e1//(MAX_RAM / (int)sizeof(Buffer))
+#define COUNT 4//(MAX_RAM / (int)sizeof(Buffer))
 
 time_t get_time(void)
 {
@@ -56,14 +56,14 @@ void RangeInsert(T &map, P data)
 }
 
 template <typename T>
-void printForward(T map)
+void printForward(const T &map)
 {
     for (typename T::const_iterator it = map.begin(); it != map.end();it++)
         std::cout << "F: " << (*it).first << " S: " << (*it).second << std::endl;
 }
 
 template <typename T>
-void printReverse(const T map)
+void printReverse(const T &map)
 {
     for (typename T::reverse_iterator it = map.rbegin(); it != map.rend();it++)
         std::cout << "F: " << (*it).first << " S: " << (*it).second << std::endl;
@@ -79,7 +79,7 @@ void AcessOpInsert(T &map)
 }
 
 template <typename T>
-void CapacityTest(T map)
+void CapacityTest(const T &map)
 {
     std::cout << "SIZE: " << map.size() << std::endl;
     std::cout << "EMPTY: " << map.empty() << std::endl;
@@ -89,7 +89,7 @@ void CapacityTest(T map)
 }
 
 template <typename T>
-void OperationsTest(T map)
+void OperationsTest(const T &map)
 {
     int element = COUNT / 2;
     if (map.find(element) == map.end())
@@ -121,19 +121,20 @@ void The_test(std::string desc)
     T map;
 
     srand(time(NULL));
-    NormalInsert<T, P>(map);
-    map.clear();
-    AcessOpInsert<T>(map);
-    std::cout << map[9] << std::endl;
-    printForward<T>(map);
-    T map2(map.begin(), map.end());
-    map.swap(map2);
-    RangeInsert<T, T>(map2, map);
-    printForward<T>(map2);
-    map2.print();
-    printReverse<T>(map2);
-    PrintConstIter<T>(map);
-    OperationsTest<T>(map);
+    // NormalInsert<T, P>(map);
+    map.print();
+    map.erase(map.begin(), map.end());
+    // map.clear();
+    // AcessOpInsert<T>(map);
+    // std::cout << map[9] << std::endl;
+    // printForward<T>(map);
+    // T map2(map.begin(), map.end());
+    // map.swap(map2);
+    // RangeInsert<T, T>(map2, map);
+    // printForward<T>(map2);
+    // // printReverse<T>(map2);
+    // PrintConstIter<T>(map);
+    // OperationsTest<T>(map);
     CapacityTest(map);
 }
 
