@@ -131,6 +131,7 @@ namespace ft
                 iterator tmp;
                 while(first != last)
                 {
+                    // std::cout << first->first << std::endl;
                     tmp = first++;
                     erase(tmp);
                 }

@@ -121,7 +121,7 @@ void The_test(std::string desc)
     T map;
 
     srand(time(NULL));
-    // NormalInsert<T, P>(map);
+    NormalInsert<T, P>(map);
     map.print();
     map.erase(map.begin(), map.end());
     // map.clear();
@@ -135,7 +135,7 @@ void The_test(std::string desc)
     // // printReverse<T>(map2);
     // PrintConstIter<T>(map);
     // OperationsTest<T>(map);
-    CapacityTest(map);
+    // CapacityTest(map);
 }
 
 #endif
