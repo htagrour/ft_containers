@@ -13,7 +13,7 @@ struct Buffer
 	int idx;
 	char buff[BUFFER_SIZE];
 };
-#define COUNT 4//(MAX_RAM / (int)sizeof(Buffer))
+#define COUNT 1e5 //(MAX_RAM / (int)sizeof(Buffer))
 
 time_t get_time(void)
 {
@@ -114,20 +114,32 @@ void OperationsTest(const T &map)
     std::cout << std::endl;
 
 }
+template <typename T>
+void erase(T &map)
+{
+    typename T::iterator it = map.begin();
+
+    for (int i = 0; i < COUNT / 2; i++)
+        it++;
+    map.erase(it , map.end());
+}
 
 template<typename T, typename P>
 void The_test(std::string desc)
 {
     T map;
 
+
     srand(time(NULL));
-    NormalInsert<T, P>(map);
-    map.print();
-    map.erase(map.begin(), map.end());
+    // NormalInsert<T, P>(map);
+    // map.print();
+    AcessOpInsert<T>(map);
+    // map.print();
+    erase<T>(map);
+    // std::cout << (--map.end())->first << std::endl;
     // map.clear();
-    // AcessOpInsert<T>(map);
     // std::cout << map[9] << std::endl;
-    // printForward<T>(map);
+    printForward<T>(map);
     // T map2(map.begin(), map.end());
     // map.swap(map2);
     // RangeInsert<T, T>(map2, map);
@@ -135,7 +147,7 @@ void The_test(std::string desc)
     // // printReverse<T>(map2);
     // PrintConstIter<T>(map);
     // OperationsTest<T>(map);
-    // CapacityTest(map);
+    CapacityTest(map);
 }
 
 #endif

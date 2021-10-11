@@ -96,56 +96,80 @@ namespace ft
 
                 if (!res.isExist)
                     return 0;
-                deleteNode(res.value);
+                deleteNode(res.value, _end);
                 return 1;
             }
 
-            void deleteNode(pointer node)
+            pointer deleteNode(pointer node, pointer last)
             {
+                pointer result = NULL;
                 if (!_size)
-                    return;
-                std::cout << node->_data->first << std::endl;
-                pointer rNode = NodeToDelete(node);
-
-                if (!rNode) // leaf
+                    return result;
+                if (!(node->_right && node->_right != _end && node->_left)) // no child || 1 child
                 {
-                    if (node == _head)
-                        _head = NULL;
-                    else
+                    if ((!node->_right || node->_right == _end) && !node->_left) // no child
                     {
-                        if (node->_parent->_left == node)
-                             node->_parent->_left = NULL;
+                        if (node == _head)
+                        {
+                            _begin = _end;
+                            _head = NULL;
+                            _end->_parent = NULL;
+                        }
                         else
-                            node->_parent->_right = NULL;
+                        {
+                            if (_begin == node)
+                                _begin = node->_parent;
+                            if (node->_parent->_left == node)
+                                node->_parent->_left = NULL;
+                            else
+                            {
+                                if (node->_right == _end)
+                                {
+                                    _end->_parent = node->_parent;
+                                    node->_parent->_right = _end;
+                                }
+                                else
+                                    node->_parent->_right = NULL;
+                            }
+                        }
                     }
+                    else // 1 child
+                    {
+                        pointer tmp = (!node->_left) ? node->_right : node->_left;
+
+                        if (node == _head)
+                        {
+                            _head = tmp;
+                            tmp->_parent = NULL;
+                        }
+                        else
+                        {
+                            // relink
+                            if (node->_parent->_left == node)
+                                node->_parent->_left = tmp;
+                            else
+                                node->_parent->_right = tmp;
+                            tmp->_parent = node->_parent;
+                        }
+                        if (node->_right == _end)
+                        {
+                            while(tmp->_right)
+                                tmp = tmp->_right;
+                            tmp->_right = _end;
+                            _end->_parent = tmp;
+                        }
+                    } 
                     deallocate_node(node);
                     _size--;
-                    return;
                 }
-                if (!node->_left || !node->_right || node->_right == _end) // 1 child
+                else // 2 child
                 {
-                    // there is a big mistake here so fix it you pieace of shiit AND thanks
-                    if (node == _head)
-                    {
-                        std::swap(node->_data, rNode->_data);
-                        node->_left = node->_right = NULL;
-                        deallocate_node(rNode);
-                    }
-                    else
-                    {
-                        if (node->_parent->_left == node)
-                            node->_parent->_left = rNode;
-                        else
-                            node->_parent->_right = rNode;
-                        rNode->_parent = node->_parent;
-                        deallocate_node(node);
-                    }
-                    _size--;
-                    return;
-                } 
-                // 2 child
-                std::swap(node->_data, rNode->_data);
-                deleteNode(rNode);
+                    pointer minNode = successorNode(node->_right);
+                    std::swap(node->_data, minNode->_data);
+                    result = node;
+                    deleteNode(minNode, last);
+                }
+                return result;
             }
 
             void clear()
@@ -157,21 +181,6 @@ namespace ft
             void print(){print2DUtil(_head, 0);}
 
     private:
-
-        pointer NodeToDelete(pointer node)
-        {
-            // 2 children
-            if (node->_right && node->_right != _end && node->_left)
-                return successorNode(node->_right);
-            // leaf 
-            if ((!node->_right || node->_right == _end) && !node->_left)
-                return NULL;
-            // single child
-            if (node->_right && node->_right != _end)
-                return node->_right;
-            else
-                return node->_left;
-        }
 
         pointer successorNode(pointer node)
         {

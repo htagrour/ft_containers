@@ -123,17 +123,23 @@ namespace ft
             }
             void erase(iterator position)
             {
-                _bst.deleteNode(position.getBase());
+                _bst.deleteNode(position.getBase(), end().getBase());
             }
 
             void erase(iterator first, iterator last)
             {
-                iterator tmp;
-                while(first != last)
+                iterator tmp = first;
+                node_pointer result;
+                iterator tmp2;
+
+                while(tmp != last)
                 {
-                    // std::cout << first->first << std::endl;
-                    tmp = first++;
-                    erase(tmp);
+                    // std::cout << tmp->first << std::endl;
+                    tmp2 = tmp;
+                    tmp2++;
+                    result = _bst.deleteNode(tmp.getBase(), last.getBase());;
+                    if (!result)
+                        tmp = tmp2;
                 }
             }
             void clear() { _bst.clear();}
