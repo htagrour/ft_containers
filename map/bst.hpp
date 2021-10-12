@@ -221,7 +221,7 @@ namespace ft
             {
                     if (!sibling || sibling == _end || (sibling &&
                         (!sibling->_left || sibling->_left->isBlack) &&
-                        (!sibling->_left || sibling->_left->isBlack))) // DB's sibling's children are black
+                        (!sibling->_right || sibling->_right->isBlack))) // DB's sibling's children are black
                         caseThree(node, sibling);
                     else if ()
                     {
