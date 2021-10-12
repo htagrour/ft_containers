@@ -106,4 +106,5 @@ namespace ft
             Node* _ptr;
     };
 }
+
 #endif

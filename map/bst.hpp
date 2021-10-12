@@ -23,8 +23,8 @@ namespace ft
             typedef typename allocator_type::template rebind<node_value>::other node_alloc;
             typedef ft::iterator<value_type, node_value> iterator;
             typedef ft::iterator<const value_type, node_value > const_iterator;
-            // typedef ft::reverseIterator<iterator> reverse_iterator;
-            // typedef ft::reverseIterator<const_iterator> const_reverse_iterator;
+            typedef ft::reverseIterator<iterator> reverse_iterator;
+            typedef ft::reverseIterator<const_iterator> const_reverse_iterator;
             
             Bst()
             {
@@ -44,11 +44,11 @@ namespace ft
             iterator get_end()  { return iterator(_end);}
             const_iterator get_end() const { return iterator(_end);}
 
-            // reverse_iterator get_rbegin()  { return iterator(_end->_parent);}
-            // reverse_iterator get_rend()  { return iterator(NULL);}
+            reverse_iterator get_rbegin()  { return iterator(_end->_parent);}
+            reverse_iterator get_rend()  { return iterator(NULL);}
 
-            // const_reverse_iterator get_rbegin() const { return const_iterator(_end->_parent);}
-            // const_reverse_iterator get_rend() const { return const_iterator(NULL);}
+            const_reverse_iterator get_rbegin() const { return const_iterator(_end->_parent);}
+            const_reverse_iterator get_rend() const { return const_iterator(NULL);}
             size_type get_size() const { return _size;}
             size_type get_maxSize() const { return _alloc.max_size();}
 
@@ -158,15 +158,21 @@ namespace ft
                             tmp->_right = _end;
                             _end->_parent = tmp;
                         }
-                    } 
+                    }
+                    fixDeleteVoilation(node);
                     deallocate_node(node);
+                    if (_head)
+                        _head->isBlack = true; // reset head to Black
                     _size--;
                 }
                 else // 2 child
                 {
                     pointer minNode = successorNode(node->_right);
                     std::swap(node->_data, minNode->_data);
-                    result = node;
+                    if (minNode == last)
+                        result = node;
+                    else
+                        result = last;
                     deleteNode(minNode, last);
                 }
                 return result;
@@ -182,11 +188,64 @@ namespace ft
 
     private:
 
+        void caseThree(pointer node, pointer sibling)
+        {
+            if (sibling)
+                sibling->isBlack = false;
+            if (node->_parent->isBlack)
+                fixDeleteVoilation(node->_parent);
+            else
+                node->_parent->isBlack = true;
+        }
+
+        void caseFour(pointer node, pointer sibling)
+        {
+            std::swap(node->_parent->isBlack, sibling->isBlack);
+            if (node->_parent->_left == node)
+                rotateLeft(node->_parent);
+            else
+                rotateRight(node->_parent);
+            fixDeleteVoilation(node);
+        }
+
+
+        void fixDeleteVoilation(pointer node)
+        {
+            if (!node || node == _head || 
+                (!node->_left && (!node->_right || node->_right == _end) && !node->isBlack))  // DB leaf and is red or is head
+                return;
+            pointer  sibling = getSibling(node);
+            if (sibling && sibling != _end && !sibling->isBlack) // DB's sibling is red
+                caseFour(node, sibling);
+            else // DB's sibling is black
+            {
+                    if (!sibling || sibling == _end || (sibling &&
+                        (!sibling->_left || sibling->_left->isBlack) &&
+                        (!sibling->_left || sibling->_left->isBlack))) // DB's sibling's children are black
+                        caseThree(node, sibling);
+                    else if ()
+                    {
+
+                    }
+                    else
+            }
+        }
+
         pointer successorNode(pointer node)
         {
             while(node && node->_left)
                 node = node->_left;
             return node;
+        }
+
+        pointer getSibling(pointer node)
+        {
+            if (!node || !node->_parent)
+                return NULL;
+            if (node->_parent->_left == node)
+                return node->_parent->_right;
+            else
+                return node->_parent->_left;
         }
 
         void deleteTree()
@@ -309,7 +368,7 @@ namespace ft
             if (node->_left)
                 node->_left->_parent = node;
             left->_parent = node->_parent;
-            if (!left->_parent)
+            if (!left->_parent) // check out from this
                 _head = left;
             else if (node == node->_parent->_left)
                 node->_parent->_left = left;
@@ -327,7 +386,7 @@ namespace ft
             if (node->_right)
                 node->_right->_parent = node;
             right->_parent = node->_parent;
-            if(!node->_parent)
+            if(!node->_parent) // check out from this
                 _head = right;
             else
                 if (node == node->_parent->_left)

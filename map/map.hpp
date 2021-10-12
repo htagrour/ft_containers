@@ -29,8 +29,8 @@ namespace ft
             typedef ft::Bst<value_type, key_compare, allocator_type> bst;
             typedef typename bst::iterator iterator;
             typedef typename bst::const_iterator const_iterator; 
-            // typedef typename bst::reverse_iterator reverse_iterator; 
-            // typedef typename bst::const_reverse_iterator const_reverse_iterator; 
+            typedef typename bst::reverse_iterator reverse_iterator; 
+            typedef typename bst::const_reverse_iterator const_reverse_iterator; 
 
 
             // Member functions
@@ -70,11 +70,11 @@ namespace ft
             iterator end() { return (_bst.get_end());}
             const_iterator end() const {return (_bst.get_end());}
 
-            // reverse_iterator rbegin() { return (_bst.get_rbegin());}
-            // const_reverse_iterator rbegin() const {return (_bst.get_rbegin());}
+            reverse_iterator rbegin() { return (_bst.get_rbegin());}
+            const_reverse_iterator rbegin() const {return (_bst.get_rbegin());}
 
-            // reverse_iterator rend() { return (_bst.get_rend());}
-            // const_reverse_iterator rend() const {return (_bst.get_rend());}
+            reverse_iterator rend() { return (_bst.get_rend());}
+            const_reverse_iterator rend() const {return (_bst.get_rend());}
 
             // Capacity
             size_type size() const { return _bst.get_size();}
@@ -134,14 +134,16 @@ namespace ft
 
                 while(tmp != last)
                 {
-                    // std::cout << tmp->first << std::endl;
                     tmp2 = tmp;
                     tmp2++;
                     result = _bst.deleteNode(tmp.getBase(), last.getBase());;
                     if (!result)
                         tmp = tmp2;
+                    else
+                       last = result; 
                 }
             }
+            
             void clear() { _bst.clear();}
             //Operations
 
