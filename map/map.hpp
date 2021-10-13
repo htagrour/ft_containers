@@ -18,7 +18,6 @@ namespace ft
             typedef ft::Node<value_type*> node;
             typedef typename node::pointer node_pointer;
             typedef Compare key_compare;
-            // typedef ###### value_compare;
             typedef Alloc allocator_type;
             typedef typename allocator_type::reference reference;
             typedef typename allocator_type::const_reference const_reference;
@@ -30,7 +29,19 @@ namespace ft
             typedef typename bst::iterator iterator;
             typedef typename bst::const_iterator const_iterator; 
             typedef typename bst::reverse_iterator reverse_iterator; 
-            typedef typename bst::const_reverse_iterator const_reverse_iterator; 
+            typedef typename bst::const_reverse_iterator const_reverse_iterator;
+
+            typedef class value_compare: public std::binary_function<value_type, value_type, bool>
+            {
+                public:
+                    bool operator()(const value_type& left, const value_type& right) const
+                    {
+                        return comp(left, right);
+                    }
+                    value_compare(key_compare pred): comp(pred){};
+                protected:
+                    key_compare comp;
+            } value_compare;
 
 
             // Member functions
@@ -40,6 +51,7 @@ namespace ft
                 _alloc = alloc;
                 _comp = comp;
             }
+
             template <class InputIterator>
             map (InputIterator first, InputIterator last,
                     const key_compare& comp = key_compare(),
@@ -48,7 +60,6 @@ namespace ft
                 _alloc = alloc;
                 _comp = comp;
                 insert(first, last);
-
             }
             map (const map& rsh){ *this = rsh;};
 
@@ -145,6 +156,11 @@ namespace ft
             }
             
             void clear() { _bst.clear();}
+
+            // Observers
+            key_compare key_comp() const {return _comp;}
+
+            value_compare value_comp() const {return value_compare(_comp);};
             //Operations
 
             iterator find (const key_type& k)

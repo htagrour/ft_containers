@@ -107,6 +107,7 @@ namespace ft
                     return result;
                 if (!(node->_right && node->_right != _end && node->_left)) // no child || 1 child
                 {
+                    fixDeleteVoilation(node);
                     if ((!node->_right || node->_right == _end) && !node->_left) // no child
                     {
                         if (node == _head)
@@ -159,7 +160,6 @@ namespace ft
                             _end->_parent = tmp;
                         }
                     }
-                    fixDeleteVoilation(node);
                     deallocate_node(node);
                     if (_head)
                         _head->isBlack = true; // reset head to Black
@@ -208,6 +208,28 @@ namespace ft
             fixDeleteVoilation(node);
         }
 
+        void caseFive(pointer node, pointer sibling)
+        {
+            pointer sibNearChild = getSiblingNearChild(sibling);
+            
+            std::swap(sibling->isBlack, sibNearChild->isBlack);
+            if (node->_parent->_right == node)
+                rotateLeft(sibling);
+            else
+                rotateRight(sibling);
+            pointer newSibling = getSibling(node);
+            caseSix(node, newSibling, getSiblingFarChild(newSibling));
+        }
+
+        void caseSix(pointer node, pointer sibling, pointer sibFarChild)
+        {
+            std::swap(node->_parent->isBlack, sibling->isBlack);
+            if (node->_parent->_left == node)
+                rotateLeft(node->_parent);
+            else
+                rotateRight(node->_parent);
+            sibFarChild->isBlack = true;
+        }
 
         void fixDeleteVoilation(pointer node)
         {
@@ -219,15 +241,19 @@ namespace ft
                 caseFour(node, sibling);
             else // DB's sibling is black
             {
-                    if (!sibling || sibling == _end || (sibling &&
+                    if (!sibling || sibling == _end ||(
                         (!sibling->_left || sibling->_left->isBlack) &&
-                        (!sibling->_right || sibling->_right->isBlack))) // DB's sibling's children are black
+                        (!sibling->_right || sibling->_right->isBlack))) // DB's sibling's children are
                         caseThree(node, sibling);
-                    else if ()
-                    {
-
-                    }
                     else
+                    {
+                        pointer sibFarChild = getSiblingFarChild(sibling);
+
+                        if (sibFarChild && !sibFarChild->isBlack) // far child is red
+                            caseSix(node, sibling, sibFarChild);
+                        else
+                            caseFive(node, sibling);
+                    }
             }
         }
 
@@ -246,6 +272,22 @@ namespace ft
                 return node->_parent->_right;
             else
                 return node->_parent->_left;
+        }
+
+        pointer getSiblingFarChild(pointer sibling)
+        {
+            if (sibling->_parent->_left == sibling)
+                return sibling->_left;
+            else
+                return sibling->_right;
+        }
+
+        pointer getSiblingNearChild(pointer sibling)
+        {
+            if (sibling->_parent->_left == sibling)
+                return sibling->_right;
+            else
+                return sibling->_left; 
         }
 
         void deleteTree()
@@ -485,7 +527,12 @@ namespace ft
             std::cout<<std::endl;
             for (int i = SPACE; i < space; i++)
                 std::cout<<" ";
-            std::cout<<root->_data->first<<"\n";
+            std::cout<<root->_data->first << " (";
+            if (root->isBlack)
+                std::cout << "B";
+            else
+                std::cout << "R";
+            std::cout << ")" << std::endl;
         
             // Process left child
             print2DUtil(root->_left, space);

@@ -191,7 +191,7 @@ namespace ft
                         pointer _temp;
                         difference_type diff = std::distance(first, last);
 
-                        if (typeid(typename ft::iterator_traits<InputIterator>::iterator_category) ==\
+                        if (typeid(typename ft::iterator_traits<InputIterator>::iterator_category) ==\ // wtf
                                 typeid(typename ft::iterator_traits<InputIterator>::iterator_category))
                                 {
                                         reserve(diff);
@@ -423,9 +423,6 @@ namespace ft
         {
                 return(!(lhs < rhs));
         }
-
-
-
 }
 
 

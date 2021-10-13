@@ -13,7 +13,7 @@ struct Buffer
 	int idx;
 	char buff[BUFFER_SIZE];
 };
-#define COUNT 1e2 //(MAX_RAM / (int)sizeof(Buffer))
+#define COUNT 1e8 //(MAX_RAM / (int)sizeof(Buffer))
 
 time_t get_time(void)
 {
@@ -85,7 +85,6 @@ void CapacityTest(const T &map)
     std::cout << "EMPTY: " << map.empty() << std::endl;
     std::cout << "MAX_SIZE: " <<  map.max_size() << std::endl;
     std::cout << "BEGIN: " << map.begin()->first << std::endl;
-    std::cout << "END: " << map.end()->first <<std::endl;
 }
 
 template <typename T>
@@ -102,15 +101,19 @@ void OperationsTest(const T &map)
     std::cout << element<< " COUNT: " <<  map.count(element) << std::endl;
 
     ft::pair<typename T::const_iterator,typename T::const_iterator> p = map.equal_range(element);
-    std::cout << element << " LowerBound: " << p.first->first;
+    std::cout << element << " LowerBound: ";
     if (p.first == map.end())
-        std::cout << " (END)"; 
+        std::cout << " (END)";
+    else
+        std::cout << p.first->first;
     std::cout << std::endl;
 
 
-    std::cout << element << " UpperBound: " << p.second->first;
+    std::cout << element << " UpperBound: ";
     if (p.second == map.end())
         std::cout << " (END)";
+    else
+        std::cout << p.second->first;
     std::cout << std::endl;
 
 }
@@ -121,7 +124,7 @@ void erase(T &map)
 
     for (int i = 0; i < COUNT / 2; i++)
         it++;
-    map.erase(map.find(9) , map.find(20));
+    map.erase(map.find(10), map.find(COUNT - 10));
 }
 
 template<typename T, typename P>
@@ -131,20 +134,20 @@ void The_test(std::string desc)
 
 
     srand(time(NULL));
-    // NormalInsert<T, P>(map);
-    // map.print();
+    NormalInsert<T, P>(map);
     AcessOpInsert<T>(map);
-    erase<T>(map);
     // map.print();
+    erase<T>(map);
+    map.print();
     // map.clear();
     printForward<T>(map);
-    T map2(map.begin(), map.end());
+    T map2;
     map.swap(map2);
-    RangeInsert<T, T>(map2, map);
-    printForward<T>(map2);
-    printReverse<T>(map2);
+    // RangeInsert<T, T>(map2, map);
+    // printForward<T>(map2);
+    // printReverse<T>(map2);
     OperationsTest<T>(map2);
-    CapacityTest(map2);
+    CapacityTest(map);
 }
 
 #endif
