@@ -93,7 +93,7 @@ namespace ft
     };
 
     template<typename InputIterator1, typename InputIterator2>
-    bool eqaul(InputIterator1 a1, InputIterator1 a2, InputIterator2 b1, InputIterator2 b2)
+    bool eqaul(InputIterator1 a1, InputIterator1 a2, InputIterator2 b1)
     {
         while(a1 != a2)
         {

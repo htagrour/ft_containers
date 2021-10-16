@@ -1,8 +1,8 @@
 #ifndef VECTOR_HPP
 #define VECTOR_HPP
-#include "VectorUtils.hpp"
 #include "../utils/Gutils.hpp"
 #include <iostream>
+#include "Viterator.hpp"
 #include <exception>
 #include <typeinfo>
 #include "../utils/reverse_iterator.hpp"
@@ -21,8 +21,8 @@ namespace ft
                 typedef typename allocator_type::const_pointer const_pointer;
                 typedef std::size_t size_type;
                 typedef std::ptrdiff_t difference_type;
-                typedef ft::VectIterator <value_type> iterator;
-                typedef ft::VectIterator<const value_type> const_iterator;
+                typedef ft::Iterator<value_type> iterator;
+                typedef ft::Iterator<const value_type> const_iterator;
                 typedef ft::reverseIterator<iterator> reverse_iterator;
                 typedef ft::reverseIterator<const_iterator> const_reverse_iterator;
 
@@ -84,7 +84,7 @@ namespace ft
                         return *this;
                 }
 
-
+                ~vector(){clearAll();};
                 /*
                         Iterators
                 */
@@ -131,7 +131,7 @@ namespace ft
                                         _alloc.destroy(_data + i);
                                 }
                                 if (_data)
-                                        _alloc.deallocate(_data, _capacity); // moxkil pop and resize
+                                        _alloc.deallocate(_data, _capacity);
                                 _data = new_arr;
                                 _capacity = n;
                         }
@@ -191,16 +191,12 @@ namespace ft
                         pointer _temp;
                         difference_type diff = std::distance(first, last);
 
-                        if (typeid(typename ft::iterator_traits<InputIterator>::iterator_category) ==\ // wtf
-                                typeid(typename ft::iterator_traits<InputIterator>::iterator_category))
-                                {
-                                        reserve(diff);
-                                        _temp = _data;
-                                        for (InputIterator it = first; it != last; it++)
-                                                _alloc.construct(_data++, *it);
-                                        _data = _temp;
-                                        _size = diff;
-                                    }
+                        reserve(diff);
+                        _temp = _data;
+                        for (InputIterator it = first; it != last; it++)
+                                _alloc.construct(_data++, *it);
+                        _data = _temp;
+                        _size = diff;
                 }
 
                 void assign (size_type n, const value_type& val)
@@ -248,7 +244,7 @@ namespace ft
                                 for (InputIterator it = first; it != last; it++)
                                         position = insert_helper(position, 1, *it);
                             }
-                            // 
+                            
                 }
 
                 iterator erase (iterator position)
@@ -274,9 +270,7 @@ namespace ft
                         if (_capacity)
                         {
                                 destroy_element(_size);
-                                // _alloc.deallocate(_data, _capacity);
                         }
-                        // zero();
                 }
                 /*
                         Allocator
@@ -289,7 +283,6 @@ namespace ft
                /*
                         relational operators
                */
-                ~vector(){clear();};
         private:
                 void zero()
                 {
@@ -367,6 +360,15 @@ namespace ft
                         }
                         return (iterator(_data + index));   
                 }
+                void clearAll()
+                {
+                        if (_capacity)
+                        {
+                                destroy_element(_size);
+                                _alloc.deallocate(_data, _capacity);
+                                _capacity = 0;
+                        }
+                }
         private:
             allocator_type _alloc;
             pointer _data;
@@ -387,7 +389,7 @@ namespace ft
         {
                 if (lhs.size() != rsh.size())
                         return (false);
-                return (ft::eqaul(lhs.begin(), lhs.end(), rsh.begin(), rsh.end()));
+                return (ft::eqaul(lhs.begin(), lhs.end(), rsh.begin()));
         }
 
         template <class T, class Alloc>
@@ -423,23 +425,5 @@ namespace ft
         {
                 return(!(lhs < rhs));
         }
-}
-
-
-
-template <typename T>
-std::ostream &operator<<(std::ostream &os, ft::vector<T> &rsh)
-{
-        os << "Size:" << rsh.size() << std::endl;
-        os << "Capacity:" << rsh.capacity() << std::endl;
-        os << "Empty:" << rsh.empty() << std::endl;
-        os << "Max_size:" << rsh.max_size() << std::endl; 
-        os << "Front:" << rsh.front() << std::endl;
-        os << "Back:" << rsh.back() << std::endl;
-
-        os << "Content:" << std::endl;
-        for (typename ft::vector<T>::iterator it = rsh.begin(); it != rsh.end(); it++)
-                std::cout << *it << std::endl;
-        return (os);
 }
 #endif
