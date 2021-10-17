@@ -1,9 +1,9 @@
 #ifndef STACK_HPP
 #define STACK_HPP
-#include <deque>
+#include "../vector/vector.hpp"
 namespace ft
 {
-    template<typename T, typename _Container = std::deque<T> >
+    template<typename T, typename _Container = ft::vector<T> >
     class stack
     {
         public:
@@ -31,7 +31,6 @@ namespace ft
                 friend bool operator>  (const stack<_T,Container>& lhs, const stack<_T,Container>& rhs);
             template <class _T, class Container>
                 friend bool operator>= (const stack<_T,Container>& lhs, const stack<_T,Container>& rhs);
-                
         protected:
             container_type c;
     };

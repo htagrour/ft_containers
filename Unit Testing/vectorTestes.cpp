@@ -1,5 +1,5 @@
 #include "Test.hpp"
-#define COUNT 1e1
+#define COUNT 1e5
 template <typename T>
 void printfForward(const T &container)
 {
